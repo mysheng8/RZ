@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Entity">
+      <UniqueIdentifier>{dc125061-ac73-4df1-89b7-fd87ab49185f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Framework">
+      <UniqueIdentifier>{1a7b9177-165b-4866-865f-a62fa8c9909e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource">
+      <UniqueIdentifier>{5f9bfc0c-5b1b-4e59-bb82-2e6590edab56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource\shader">
+      <UniqueIdentifier>{45cbd774-ec9e-465d-94d0-bdabe793a6fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource\model">
+      <UniqueIdentifier>{d63aa422-259b-4538-9659-0daca6857600}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EntityManager">
+      <UniqueIdentifier>{5a0b39db-12b5-4943-af21-268ee9df61e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FbxImporter">
+      <UniqueIdentifier>{01d06c22-fbc2-4892-a9e4-06232ff6d9a8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Entity\FbxImporter\RZFbxImporter.cpp">
+      <Filter>FbxImporter</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity\FbxImporter\RZIntermediateMesh.cpp">
+      <Filter>FbxImporter</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Framework\SystemClass.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\InputClass.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\GraphicsClass.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\D3dClass.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity\RZLight.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity\RZMaterial.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity\RZShader.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity\RZCamera.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity\RZMesh.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="EntityManager\RZShaderFactory.cpp">
+      <Filter>EntityManager</Filter>
+    </ClCompile>
+    <ClCompile Include="EntityManager\RZEntityFactory.cpp">
+      <Filter>EntityManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity\RZEntity.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity\RZTexture.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Entity\FbxImporter\RZFbxImporter.h">
+      <Filter>FbxImporter</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity\FbxImporter\RZIntermediateMesh.h">
+      <Filter>FbxImporter</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\SystemClass.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\InputClass.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\GraphicsClass.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\D3dClass.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity\RZLight.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity\RZMaterial.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity\RZShader.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity\RZCamera.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity\RZMesh.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityManager\RZShaderFactory.h">
+      <Filter>EntityManager</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityManager\RZEntityFactory.h">
+      <Filter>EntityManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity\RZEntity.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity\RZTexture.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resource\shader\default.vs">
+      <Filter>Resource\shader</Filter>
+    </None>
+    <None Include="Resource\shader\default.ps">
+      <Filter>Resource\shader</Filter>
+    </None>
+    <None Include="Resource\shader\test.vs">
+      <Filter>Resource\shader</Filter>
+    </None>
+    <None Include="Resource\shader\test.ps">
+      <Filter>Resource\shader</Filter>
+    </None>
+  </ItemGroup>
+</Project>

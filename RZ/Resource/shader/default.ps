@@ -1,0 +1,27 @@
+cbuffer MatrixBuffer  
+{  
+	matrix worldViewProjection;
+	float4 lightDir;
+    matrix worldMatrix;  
+    matrix viewMatrix;  
+    matrix projectionMatrix;  
+}; 
+
+struct PixelInputType  
+{  
+    float4 position : SV_POSITION;  
+    float4 normal : NORMAL;
+	float4 color : COLOR;
+	float2 uv:UV;
+}; 
+
+float4 ColorPixelShader(PixelInputType input) : SV_TARGET  
+{  
+	float3 ambient=float3(0.2f,0.2f,0.2f);
+	float diffuse=saturate(dot(input.normal,lightDir));
+	float3 finalcolor=saturate(diffuse*(input.color.rgb)+ambient);
+	float4 result;
+	result.rgb=finalcolor.rgb;
+	result.a=1.0f;
+    return result;  
+}

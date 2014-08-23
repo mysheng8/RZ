@@ -1,0 +1,39 @@
+cbuffer MatrixBuffer  
+{  
+	matrix worldViewProjection;
+	float4 lightDir;
+    matrix worldMatrix;  
+    matrix viewMatrix;  
+    matrix projectionMatrix;  
+}; 
+
+struct PixelInputType  
+{  
+    float4 position : SV_POSITION;  
+    float4 normal : NORMAL;
+	float4 color : COLOR;
+	float2 uv:UV;
+}; 
+
+Texture2D colorMap_ : register( t0 ); 
+ 
+SamplerState colorSampler_ : register( s0 ); 
+
+float4 ColorPixelShader(PixelInputType input) : SV_TARGET  
+{  
+	float3 ambient=float3(0.1f,0.1f,0.1f);
+
+	float glossness=10.0f;
+	float diffuseLevel=0.6f;
+	float specularLevel=0.8f;
+	float3 diffuseColor=colorMap_.Sample( colorSampler_, input.uv );
+	float LN=saturate(dot(input.normal,lightDir));
+	float diffuse=LN*(input.color.rgb)*diffuseLevel;
+
+	float specular=pow(LN,glossness)*specularLevel;
+	float3 finalcolor=saturate((diffuse+ambient+specular)*diffuseColor);
+	float4 result;
+	result.rgb=finalcolor.rgb;
+	result.a=1.0f;
+    return result;  
+}
