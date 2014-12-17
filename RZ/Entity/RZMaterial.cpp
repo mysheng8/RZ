@@ -18,14 +18,43 @@ RZMaterial::~RZMaterial()
 {  
 }
 
-bool RZMaterial::Render(ID3D11DeviceContext* deviceContext, int indexCount, int indexStart, int vertexStart, D3DXMATRIX worldViewProjection, D3DXVECTOR4 lightDir, D3DXMATRIX worldMatrix,D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix)
+void RZMaterial::Initialize(RZShader* shader,RZMatParams* params, int numTex)
 {
-	for(int i=0;i!=m_texList.size();++i)
+	m_shader=shader;
+	m_params=params;
+	m_numTex=numTex;
+	m_texs=(RZTexture **)malloc(numTex*sizeof(RZTexture*));
+
+
+
+}
+
+bool RZMaterial::Render(ID3D11DeviceContext* deviceContext, int indexCount, int indexStart, int vertexStart, D3DXMATRIX worldMatrix,D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix)
+{
+	for(int i=0;i!=m_numTex;++i)
 	{
-		m_texList[i]->Render(deviceContext);
+		m_texs[i]->Render(deviceContext,i);
 	}
 	bool result;
-	result=m_shader->Render( deviceContext, indexCount, indexStart, vertexStart, worldViewProjection, lightDir, worldMatrix, viewMatrix, projectionMatrix );
+	result=m_shader->Render( deviceContext, indexCount, indexStart, vertexStart, worldMatrix, viewMatrix, projectionMatrix );
 
 	return result;
 }
+
+void RZMaterial::ShutDown()
+{
+	//release in manager in the end
+	m_shader=0;
+	m_texs=0;
+
+	delete(m_params);
+
+	if(m_matBuffer)
+	{
+		m_matBuffer->Release();
+		m_matBuffer=0;
+	}
+}
+
+
+

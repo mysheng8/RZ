@@ -6,7 +6,7 @@ using namespace RZ;
 
 
 
-bool RZFbxImporter::MeshInfo::GetMeshDesc(FbxMesh* pFbxMesh)
+bool RZFbxImporter::RZMeshDesc::GetMeshDesc(FbxMesh* pFbxMesh)
 {
 	uvsetCount=pFbxMesh->GetUVLayerCount();
 
@@ -24,7 +24,7 @@ bool RZFbxImporter::MeshInfo::GetMeshDesc(FbxMesh* pFbxMesh)
 }
 
 
-bool RZFbxImporter::VertexDesc::CopyDataToBuffer(FbxVector4 pos,VertexData *info)
+bool RZFbxImporter::RZVertexReader::CopyDataToBuffer(FbxVector4 pos,RZInVertex *info)
 {
 	stringstream ss;
 
@@ -33,11 +33,11 @@ bool RZFbxImporter::VertexDesc::CopyDataToBuffer(FbxVector4 pos,VertexData *info
 	ss>>t;
 	ss.clear();
 
-	vector<int> *vertexDataList=&m_VertexDataMap[t];
+	vector<int> *RZInVertexList=&m_RZInVertexMap[t];
 	int reusedVertex=-1;
-	for(vector<int>::iterator it=vertexDataList->begin();it!=vertexDataList->end();++it)
+	for(vector<int>::iterator it=RZInVertexList->begin();it!=RZInVertexList->end();++it)
 	{
-		if(m_VertexInfos[*it]==*info)
+		if(m_vList[*it]==*info)
 		{
 			reusedVertex=*it;
 		}
@@ -48,42 +48,46 @@ bool RZFbxImporter::VertexDesc::CopyDataToBuffer(FbxVector4 pos,VertexData *info
 	}
 	else
 	{
-		m_VertexInfos.push_back(*info);
-		m_Indices.push_back(m_VertexInfos.size()-1);
-		vertexDataList->push_back(m_VertexInfos.size()-1);
+		m_vList.push_back(*info);
+		m_Indices.push_back(m_vList.size()-1);
+		RZInVertexList->push_back(m_vList.size()-1);
 	}
 	return true;
 }
 
-bool RZFbxImporter::VertexDesc::GetVerticesFromBuffer(void** pVertices)
+bool RZFbxImporter::RZVertexReader::GetVerticesFromBuffer(void** pVertices)
 {
-	int num_VertexInfo=m_VertexInfos.size();
+	int num_VertexInfo=m_vList.size();
 	*pVertices=new RZVertexType[num_VertexInfo];
 	int i=0;
 
 	for(i=0;i!=num_VertexInfo;++i)
 	{
 		RZVertexType *pRZVert=((RZVertexType*)(*pVertices)+i);
-		pRZVert->position[0]=(m_VertexInfos[i]).pos[0];
-		pRZVert->position[1]=(m_VertexInfos[i]).pos[1];
-		pRZVert->position[2]=(m_VertexInfos[i]).pos[2];
+		pRZVert->position[0]=(m_vList[i]).pos[0];
+		pRZVert->position[1]=(m_vList[i]).pos[1];
+		pRZVert->position[2]=(m_vList[i]).pos[2];
 
-		pRZVert->normal[0]=(m_VertexInfos[i]).normal[0];
-		pRZVert->normal[1]=(m_VertexInfos[i]).normal[1];
-		pRZVert->normal[2]=(m_VertexInfos[i]).normal[2];
+		pRZVert->normal[0]=(m_vList[i]).normal[0];
+		pRZVert->normal[1]=(m_vList[i]).normal[1];
+		pRZVert->normal[2]=(m_vList[i]).normal[2];
 
-		pRZVert->color.r=(m_VertexInfos[i]).color[0];
-		pRZVert->color.g=(m_VertexInfos[i]).color[1];
-		pRZVert->color.b=(m_VertexInfos[i]).color[2];
-		pRZVert->color.a=(m_VertexInfos[i]).color[3];
+		pRZVert->tangent[0]=(m_vList[i]).tangent[0];
+		pRZVert->tangent[1]=(m_vList[i]).tangent[1];
+		pRZVert->tangent[2]=(m_vList[i]).tangent[2];
 
-		pRZVert->uv[0]=(m_VertexInfos[i]).uv1[0];
-		pRZVert->uv[1]=(m_VertexInfos[i]).uv1[1];
+		pRZVert->color.r=(m_vList[i]).color[0];
+		pRZVert->color.g=(m_vList[i]).color[1];
+		pRZVert->color.b=(m_vList[i]).color[2];
+		pRZVert->color.a=(m_vList[i]).color[3];
+
+		pRZVert->uv[0]=(m_vList[i]).uv1[0];
+		pRZVert->uv[1]=(m_vList[i]).uv1[1];
 	}
 	return true;
 }
 
-bool RZFbxImporter::VertexDesc::GetIndicesFromBuffer(void** pIndices)
+bool RZFbxImporter::RZVertexReader::GetIndicesFromBuffer(void** pIndices)
 {
 	int num_Indices=m_Indices.size();
 	*pIndices=new DWORD[num_Indices];
@@ -98,16 +102,16 @@ bool RZFbxImporter::VertexDesc::GetIndicesFromBuffer(void** pIndices)
 
 void RZFbxImporter::init()
 {
-	lSdkManager = FbxManager::Create();
-	FbxIOSettings *ios = FbxIOSettings::Create(lSdkManager, IOSROOT);
-    lSdkManager->SetIOSettings(ios);
+	m_sdkManager = FbxManager::Create();
+	FbxIOSettings *ios = FbxIOSettings::Create(m_sdkManager, IOSROOT);
+    m_sdkManager->SetIOSettings(ios);
 
 }
 
 RZ::RZFbxImporter::~RZFbxImporter()
 {
-	lScene->Destroy();
-	lSdkManager->Destroy();
+	m_scene->Destroy();
+	m_sdkManager->Destroy();
 }
 
 bool RZFbxImporter::readPos(FbxMesh* pFbxMesh,int ctrlPointIndex,FbxVector4 &outPos)
@@ -229,6 +233,62 @@ bool RZFbxImporter::readNM(FbxMesh* pFbxMesh,int ctrlPointIndex,int vertexIndex,
 	return true;
 }
 
+bool RZFbxImporter::readTG(FbxMesh* pFbxMesh,int ctrlPointIndex,int vertexIndex,FbxVector4 &outTG)
+{
+	//get vertex normal point
+	FbxGeometryElementTangent* leTangent = pFbxMesh->GetElementTangent();
+	//read normal
+	switch(leTangent->GetMappingMode()) 
+	{ 
+	case FbxGeometryElement::eByControlPoint: 
+		{ 
+			switch(leTangent->GetReferenceMode()) 
+			{ 
+			case FbxGeometryElement::eDirect: 
+				{ 
+					outTG = leTangent->GetDirectArray().GetAt(ctrlPointIndex); 
+				} 
+				break; 
+ 
+			case FbxGeometryElement::eIndexToDirect: 
+				{ 
+					int id = leTangent->GetIndexArray().GetAt(ctrlPointIndex); 
+					outTG = leTangent->GetDirectArray().GetAt(id); 
+				} 
+				break; 
+ 
+			default: 
+				break; 
+			} 
+		} 
+		break; 
+ 
+	case FbxGeometryElement::eByPolygonVertex: 
+		{ 
+			switch(leTangent->GetReferenceMode()) 
+			{ 
+			case FbxGeometryElement::eDirect: 
+				{ 
+					outTG = leTangent->GetDirectArray().GetAt(vertexIndex); 
+				} 
+				break; 
+ 
+			case FbxGeometryElement::eIndexToDirect: 
+				{ 
+					int id = leTangent->GetIndexArray().GetAt(vertexIndex); 
+					outTG = leTangent->GetDirectArray().GetAt(id); 
+				} 
+				break; 
+ 
+			default: 
+				break; 
+			} 
+		} 
+		break; 
+	}
+	return true;
+}
+
 bool RZFbxImporter::readColor(FbxMesh* pFbxMesh,int ctrlPointIndex,int vertexIndex,FbxColor &outColor)
 {
 	//get vertex normal point
@@ -285,43 +345,47 @@ bool RZFbxImporter::readColor(FbxMesh* pFbxMesh,int ctrlPointIndex,int vertexInd
 	return true;
 }
 
-bool RZFbxImporter::GetMeshData(FbxMesh* pInMesh, VertexDesc* pVertDesc)
+bool RZFbxImporter::GetMeshData(FbxMesh* pInMesh, RZVertexReader* pReader, RZMeshDesc* pDesc)
 {
 
 	const int triangleCount  = pInMesh->GetPolygonCount();
 	const int pointCount=3;
 	int i,j;
-	int subID=pVertDesc->GetSubsetsCount();
+	int subID=pReader->GetSubsetsCount();
 
 	int vertexIndex=0;
-	VertexData* vList=new VertexData[pointCount];
+	RZInVertex* vList=new RZInVertex[pointCount];
 	for(i=0;i!=triangleCount;++i)
 	{
 		for(j=0;j!=pointCount;++j)
 		{
 			int ctrlPointIndex=pInMesh->GetPolygonVertex(i , j); 
-			VertexData vd;
+			RZInVertex vd;
 			//read position
 			readPos(pInMesh,ctrlPointIndex,vd.pos);
 
 			//read uv
-			if(pInfo->uvsetCount>0)
+			if(pDesc->uvsetCount>0)
 				readUV(pInMesh,ctrlPointIndex,vertexIndex,0,vd.uv1);
-			if(pInfo->uvsetCount>1)
+			if(pDesc->uvsetCount>1)
 				readUV(pInMesh,ctrlPointIndex,vertexIndex,0,vd.uv2);
-			if(pInfo->uvsetCount>2)
+			if(pDesc->uvsetCount>2)
 				readUV(pInMesh,ctrlPointIndex,vertexIndex,0,vd.uv3);
 
 			//read normal
-			if(pInfo->hasNormal)
+			if(pDesc->hasNormal)
 				readNM(pInMesh,ctrlPointIndex,vertexIndex,vd.normal);
 
+			//read tangent
+			if(pDesc->hasTangent)
+				readTG(pInMesh,ctrlPointIndex,vertexIndex,vd.tangent);
+
 			//read color
-			if(pInfo->hasVectorColor)
+			if(pDesc->hasVectorColor)
 				readColor(pInMesh,ctrlPointIndex,vertexIndex,vd.color);
 
 			vList[j]=vd;
-			//pVertDesc->CopyDataToBuffer(vd.pos,&vd);
+			//pReader->CopyDataToBuffer(vd.pos,&vd);
 			++vertexIndex;
 		}
 		
@@ -329,28 +393,28 @@ bool RZFbxImporter::GetMeshData(FbxMesh* pInMesh, VertexDesc* pVertDesc)
 		for(j=0;j!=pointCount;++j)
 		{
 			vList[pointCount-1-j].ConvertCoordinateSystem();
-			pVertDesc->CopyDataToBuffer(vList[pointCount-1-j].pos,&(vList[pointCount-1-j]));
+			pReader->CopyDataToBuffer(vList[pointCount-1-j].pos,&(vList[pointCount-1-j]));
 		}
 		
 	}
 	delete[] vList;
 
-	pVertDesc->AddSubsets();
+	pReader->AddSubsets();
 	return true;
 }
 
-bool RZFbxImporter::WriteMeshData(INTERMEDIATE_MESH* &pOutMesh,VertexDesc* pVertDesc)
+bool RZFbxImporter::WriteMeshData(INTERMEDIATE_MESH* &pOutMesh,RZVertexReader* pReader, RZMeshDesc* pDesc)
 {
-	int numVertices=pVertDesc->GetVerticesCount();
-	int numIndex=pVertDesc->GetIndicesCount();
+	int numVertices=pReader->GetVerticesCount();
+	int numIndex=pReader->GetIndicesCount();
 	int dwVertexStride=sizeof(RZVertexType);
 
 	//convert to array
 	void* pVertices = NULL;
 	void* pIndices = NULL;
 	
-	pVertDesc->GetVerticesFromBuffer(&pVertices);
-	pVertDesc->GetIndicesFromBuffer(&pIndices);
+	pReader->GetVerticesFromBuffer(&pVertices);
+	pReader->GetIndicesFromBuffer(&pIndices);
 
 	// Get the Vertex Info into the Mesh
 	m_pRZIntermediateMesh->AddVertexBuffer(pOutMesh, 0, numVertices, numVertices*dwVertexStride, dwVertexStride, pVertices );
@@ -362,9 +426,9 @@ bool RZFbxImporter::WriteMeshData(INTERMEDIATE_MESH* &pOutMesh,VertexDesc* pVert
 	int currentIndexPos=0;
 	int subsetIndexCount=0;
 
-	for(int i=0;i!=pVertDesc->GetSubsetsCount();++i)
+	for(int i=0;i!=pReader->GetSubsetsCount();++i)
 	{
-		subsetIndexCount=pVertDesc->GetSubsetsIndexPos(i)-currentIndexPos;
+		subsetIndexCount=pReader->GetSubsetsIndexPos(i)-currentIndexPos;
 
 		m_pRZIntermediateMesh->AddSubset( pOutMesh,"",i,D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST,currentIndexPos,subsetIndexCount,0,numVertices);
 
@@ -378,8 +442,8 @@ bool RZFbxImporter::ConvertToRZMesh(FbxNode* pNode,int &currentVertexPos, int &c
 	//Get Mesh
 	FbxMesh* pOrgMesh=pNode->GetMesh();
 
-	pInfo=new MeshInfo();
-	pInfo->GetMeshDesc(pOrgMesh);
+	RZMeshDesc* desc=new RZMeshDesc();
+	desc->GetMeshDesc(pOrgMesh);
 
 	if (m_pRZIntermediateMesh==NULL)
 		m_pRZIntermediateMesh = new RZIntermediateMesh();
@@ -396,7 +460,7 @@ bool RZFbxImporter::ConvertToRZMesh(FbxNode* pNode,int &currentVertexPos, int &c
 	
 
 
-	FbxGeometryConverter converter(lSdkManager);
+	FbxGeometryConverter converter(m_sdkManager);
 
 	//triangluation
 	if(!pOrgMesh->IsTriangleMesh())
@@ -404,25 +468,28 @@ bool RZFbxImporter::ConvertToRZMesh(FbxNode* pNode,int &currentVertexPos, int &c
         pOrgMesh=(FbxMesh*)converter.Triangulate(pOrgMesh,true);
     }
 
+	//generate Tangent
+	if(!desc->hasTangent)
+    {
+        pOrgMesh->GenerateTangentsData(0);
+    }
 	
-
-
 	//Get Material List
-	for(int i=0;i!=pInfo->matCount;++i)
+	for(int i=0;i!=desc->matCount;++i)
 	{
-		m_pRZIntermediateMesh->AddMaterial(pInfo->matList[i].c_str());
+		m_pRZIntermediateMesh->AddMaterial(desc->matList[i].c_str());
 	}
 
-	VertexDesc* pVertDesc=new VertexDesc();
+	RZVertexReader* reader=new RZVertexReader();
 
-	if(pInfo->matCount==1)
+	if(desc->matCount==1)
 	{
 		FbxSurfaceMaterial* mat=pNode->GetMaterial(0);
 		INTERMEDIATE_MATERIAL*  pMaterial = m_pRZIntermediateMesh->AddMaterial(mat->GetName());
-		GetMeshData(pOrgMesh,pVertDesc);
-		WriteMeshData(pMesh,pVertDesc);
+		GetMeshData(pOrgMesh,reader,desc);
+		WriteMeshData(pMesh,reader,desc);
 	}
-	else if(pInfo->matCount>1)
+	else if(desc->matCount>1)
 	{
 		//split mesh per material
 		bool result=converter.SplitMeshPerMaterial(pOrgMesh,true);
@@ -445,35 +512,36 @@ bool RZFbxImporter::ConvertToRZMesh(FbxNode* pNode,int &currentVertexPos, int &c
 			FbxLayerElementMaterial* layerElement=pMeshList[j]->GetElementMaterial(0);
 			int index = layerElement->GetIndexArray()[0];
 			FbxSurfaceMaterial* mat = pNode->GetMaterial(index);
-			GetMeshData(pMeshList[j],pVertDesc);
+			GetMeshData(pMeshList[j],reader,desc);
 		}
-		WriteMeshData(pMesh,pVertDesc);
+		WriteMeshData(pMesh,reader,desc);
 	}
-	delete pVertDesc;
+	delete reader;
+	delete desc;
 	return true;
 }
 
 
 void RZ::RZFbxImporter::LoadMeshFromFile(const char* lFilename)
 {
-	FbxImporter* lImporter = FbxImporter::Create(lSdkManager,"");
-	if(!lImporter->Initialize(lFilename, -1, lSdkManager->GetIOSettings())) 
+	FbxImporter* lImporter = FbxImporter::Create(m_sdkManager,"");
+	if(!lImporter->Initialize(lFilename, -1, m_sdkManager->GetIOSettings())) 
 	{ 
         printf("Call to FbxImporter::Initialize() failed.\n"); 
         printf("Error returned: %s\n\n", lImporter->GetStatus().GetErrorString()); 
         exit(-1);
 	}
-	lScene = FbxScene::Create(lSdkManager,"myScene");
+	m_scene = FbxScene::Create(m_sdkManager,"myScene");
 	
 	
-	lImporter->Import(lScene);
+	lImporter->Import(m_scene);
 	lImporter->Destroy();
 
 	FbxAxisSystem directXAxisSys(FbxAxisSystem::EUpVector::eYAxis,
     FbxAxisSystem::EFrontVector::eParityOdd,
     FbxAxisSystem::eLeftHanded);
-	//directXAxisSys.ConvertScene(lScene);
-	FbxNode* lRootNode = lScene->GetRootNode();
+	//directXAxisSys.ConvertScene(m_scene);
+	FbxNode* lRootNode = m_scene->GetRootNode();
 
 	int i;
 	int	vertexPos=0;
@@ -486,4 +554,6 @@ void RZ::RZFbxImporter::LoadMeshFromFile(const char* lFilename)
 			ConvertToRZMesh(pNode,vertexPos, indexPos);
 		}
     }
+
+	
 }

@@ -1,6 +1,5 @@
 cbuffer MatrixBuffer  
 {  
-	matrix worldViewProjection;
 	float4 lightDir;
     matrix worldMatrix;  
     matrix viewMatrix;  

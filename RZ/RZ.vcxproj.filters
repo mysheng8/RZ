@@ -58,16 +58,31 @@
     <ClCompile Include="Entity\RZMesh.cpp">
       <Filter>Entity</Filter>
     </ClCompile>
-    <ClCompile Include="EntityManager\RZShaderFactory.cpp">
-      <Filter>EntityManager</Filter>
-    </ClCompile>
-    <ClCompile Include="EntityManager\RZEntityFactory.cpp">
-      <Filter>EntityManager</Filter>
-    </ClCompile>
     <ClCompile Include="Entity\RZEntity.cpp">
       <Filter>Entity</Filter>
     </ClCompile>
     <ClCompile Include="Entity\RZTexture.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="EntityManager\RZLightManager.cpp">
+      <Filter>EntityManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\RZRenderQueue.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="EntityManager\RZEntityManager.cpp">
+      <Filter>EntityManager</Filter>
+    </ClCompile>
+    <ClCompile Include="EntityManager\RZShaderManager.cpp">
+      <Filter>EntityManager</Filter>
+    </ClCompile>
+    <ClCompile Include="EntityManager\RZTextureManager.cpp">
+      <Filter>EntityManager</Filter>
+    </ClCompile>
+    <ClCompile Include="EntityManager\RZMaterialManager.cpp">
+      <Filter>EntityManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity\RZPrefab.cpp">
       <Filter>Entity</Filter>
     </ClCompile>
   </ItemGroup>
@@ -105,30 +120,45 @@
     <ClInclude Include="Entity\RZMesh.h">
       <Filter>Entity</Filter>
     </ClInclude>
-    <ClInclude Include="EntityManager\RZShaderFactory.h">
-      <Filter>EntityManager</Filter>
-    </ClInclude>
-    <ClInclude Include="EntityManager\RZEntityFactory.h">
-      <Filter>EntityManager</Filter>
-    </ClInclude>
     <ClInclude Include="Entity\RZEntity.h">
       <Filter>Entity</Filter>
     </ClInclude>
     <ClInclude Include="Entity\RZTexture.h">
       <Filter>Entity</Filter>
     </ClInclude>
+    <ClInclude Include="EntityManager\RZLightManager.h">
+      <Filter>EntityManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\RZRenderQueue.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityManager\RZEntityManager.h">
+      <Filter>EntityManager</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityManager\RZShaderManager.h">
+      <Filter>EntityManager</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityManager\RZTextureManager.h">
+      <Filter>EntityManager</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityManager\RZMaterialManager.h">
+      <Filter>EntityManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity\RZPrefab.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resource\shader\default.vs">
+    <None Include="Resource\shader\renderToQuad.vs">
       <Filter>Resource\shader</Filter>
     </None>
-    <None Include="Resource\shader\default.ps">
+    <None Include="Resource\shader\renderToQuad.ps">
       <Filter>Resource\shader</Filter>
     </None>
-    <None Include="Resource\shader\test.vs">
+    <None Include="Resource\shader\basic.vs">
       <Filter>Resource\shader</Filter>
     </None>
-    <None Include="Resource\shader\test.ps">
+    <None Include="Resource\shader\basic.ps">
       <Filter>Resource\shader</Filter>
     </None>
   </ItemGroup>

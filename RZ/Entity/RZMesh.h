@@ -132,6 +132,7 @@ namespace RZ
 	public:
 		D3DXVECTOR3 position;
 		D3DXVECTOR3 normal;
+		D3DXVECTOR3 tangent;
 		D3DXCOLOR color;
 		D3DXVECTOR2 uv;
 	};
@@ -165,15 +166,13 @@ namespace RZ
 		bool CreateFromFile(ID3D11Device* device, char* modelFilename);
 		bool CreateFromMemory(ID3D11Device* device, char* modelMeshData);
 
-		bool RegisterMaterial(UINT id, RZShader* shader);
-
-		bool RegisterTexture(UINT id, RZTexture* tex);
+		bool SetMaterial(UINT id, RZMaterial* pMat);
 
 		bool ReleaseModel();
 
-		bool Render(ID3D11DeviceContext* pd3dDeviceContext,D3DXMATRIX, D3DXVECTOR4, D3DXMATRIX, D3DXMATRIX, D3DXMATRIX);
+		bool Render(ID3D11DeviceContext* pd3dDeviceContext,D3DXMATRIX, D3DXMATRIX, D3DXMATRIX);
 
-		bool RenderMesh(UINT iMesh,ID3D11DeviceContext* pd3dDeviceContext,D3DXMATRIX, D3DXVECTOR4, D3DXMATRIX, D3DXMATRIX, D3DXMATRIX);
+		bool RenderMesh(UINT iMesh,ID3D11DeviceContext* pd3dDeviceContext,D3DXMATRIX, D3DXMATRIX, D3DXMATRIX);
 
 		
 		//Debug

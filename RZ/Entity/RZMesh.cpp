@@ -208,18 +208,9 @@ bool RZMesh::CreateIndexBuffer(ID3D11Device* pd3dDevice,RZMESH_INDEX_BUFFER_HEAD
 
 }
 
-bool RZMesh::RegisterMaterial(UINT id, RZShader* shader)
+bool RZMesh::SetMaterial(UINT id, RZMaterial* pMat)
 {
-	RZMaterial* pMaterial=new RZMaterial();
-	pMaterial->Initialize(shader);
-	m_matList[id]=pMaterial;
-	return true;
-}
-
-bool RZMesh::RegisterTexture(UINT id, RZTexture* tex)
-{
-	RZMaterial* pMaterial=m_matList[id];
-	pMaterial->AddTexture(tex);
+	m_matList[id]=pMat;
 	return true;
 }
 
@@ -236,13 +227,14 @@ bool RZMesh::ReleaseModel()
         if( !IsErrorResource( m_pIndexBufferArray[i].pIB11 ) )
             SAFE_RELEASE( m_pIndexBufferArray[i].pIB11 );
     }
+
 	return true;
 }
 
 
 
 #define MAX_D3D11_VERTEX_STREAMS D3D11_IA_VERTEX_INPUT_RESOURCE_SLOT_COUNT
-bool RZMesh::RenderMesh(UINT iMesh,ID3D11DeviceContext* pd3dDeviceContext, D3DXMATRIX worldViewProjection, D3DXVECTOR4 lightDir, D3DXMATRIX worldMatrix,D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix)
+bool RZMesh::RenderMesh(UINT iMesh,ID3D11DeviceContext* pd3dDeviceContext, D3DXMATRIX worldMatrix,D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix)
 {
 	RZMESH_MESH* pMesh = &m_pMeshArray[iMesh];
 
@@ -292,20 +284,20 @@ bool RZMesh::RenderMesh(UINT iMesh,ID3D11DeviceContext* pd3dDeviceContext, D3DXM
 
 		RZMaterial* pMaterial=m_matList[pSubset->MaterialID];
 
-        pMaterial->Render( pd3dDeviceContext, IndexCount, IndexStart, VertexStart, worldViewProjection, lightDir, worldMatrix, viewMatrix, projectionMatrix );
+        pMaterial->Render( pd3dDeviceContext, IndexCount, IndexStart, VertexStart, worldMatrix, viewMatrix, projectionMatrix );
     }
 	return true;
 }
 
 
-bool RZMesh::Render(ID3D11DeviceContext* pd3dDeviceContext, D3DXMATRIX worldViewProjection, D3DXVECTOR4 lightDir, D3DXMATRIX worldMatrix,D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix)
+bool RZMesh::Render(ID3D11DeviceContext* pd3dDeviceContext, D3DXMATRIX worldMatrix,D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix)
 {
 	if( !m_pStaticMeshData || !m_pMeshHeader )
         return false;
 
 	for (int i=0;i!=m_pMeshHeader->NumMeshes;++i)
 	{
-		RenderMesh( i,pd3dDeviceContext,worldViewProjection,lightDir,worldMatrix,viewMatrix,projectionMatrix);
+		RenderMesh( i,pd3dDeviceContext,worldMatrix,viewMatrix,projectionMatrix);
 	}
 	return true;
 }

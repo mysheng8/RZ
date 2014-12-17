@@ -1,0 +1,41 @@
+struct PixelInputType  
+{  
+    float4 position		: SV_POSITION;  
+    float3 normal		: NORMALWS;
+	float2 uv			: TEXCOORD; 
+	float4 wPos			: POSITIONWS;
+	float3 tangent		: TANGENTWS;
+	float3 binormal		: BINORMALWS;
+	float4 color		: COLOR;
+};
+
+
+struct PixelOutputType  
+{  
+    float4 color		: SV_Target0;  
+    float4 normal		: SV_Target1;
+	float4 specular		: SV_Target2; 
+	float4 pos			: SV_Target3;
+};
+
+Texture2D colorMap : register( t0 ); 
+Texture2D normalMap : register( t1 );
+SamplerState colorSampler : register( s0 ); 
+SamplerState normalSampler : register( s1 );
+
+PixelOutputType BasicPixelShader(PixelInputType input)  
+{  
+	PixelOutputType output;
+
+	float3 diffuse=colorMap.Sample(colorSampler,input.uv).xyz;
+	float3x3 tangentspaceWS=float3x3(normalize(input.tangent),normalize(input.binormal),normalize(input.normal));
+	float3 normalTS=normalMap.Sample(normalSampler,input.uv).xyz;
+	normalTS=normalize(normalTS*2.0f -1.0f);
+	float3 normalWS=mul(normalTS,tangentspaceWS);
+
+	output.color=float4(diffuse,1.0f);
+	output.normal=float4(normalWS,1.0f);
+	output.specular=float4(diffuse,1.0f);
+	output.pos=float4(input.wPos);
+    return output;  
+}

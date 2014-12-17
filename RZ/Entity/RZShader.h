@@ -1,3 +1,4 @@
+#pragma once
 #ifndef _RZShader_H_
 #define _RZShader_H_
 
@@ -9,33 +10,26 @@
 namespace RZ
 {
 
+	struct MatrixBufferType  
+	{  
+		D3DXMATRIX world;  
+		D3DXMATRIX view;  
+		D3DXMATRIX projection; 
+	};
+
 	class RZShader
 	{
 	public:
 		RZShader();  
 		RZShader(const RZShader&);  
 		~RZShader();
-
-		bool Initialize(ID3D11Device*, HWND);  
-		void Shutdown();  
-		bool Render(ID3D11DeviceContext*, int indexCount, int indexStart, int vertexStart, D3DXMATRIX, D3DXVECTOR4, D3DXMATRIX, D3DXMATRIX, D3DXMATRIX);
-		bool InitializeShader(ID3D11Device*, HWND, CHAR*, CHAR*);
+		bool Initialize(ID3D11Device* device, HWND hwnd, ID3D11Buffer* matrixBuffer, CHAR* vsFilename, CHAR* psFilename);  
+		bool Render(ID3D11DeviceContext*, int indexCount, int indexStart, int vertexStart, D3DXMATRIX, D3DXMATRIX, D3DXMATRIX);
+		void Shutdown(); 
 
 	private:
-		struct MatrixBufferType  
-		{  
-			D3DXMATRIX worldViewProjection;
-			D3DXVECTOR4 lightDir;
-			D3DXMATRIX world;  
-			D3DXMATRIX view;  
-			D3DXMATRIX projection; 
-		};
-
-		  
-		void ShutdownShader();  
 		void OutputShaderErrorMessage(ID3D10Blob*, HWND, CHAR*);  
-  
-		bool SetShaderParameters(ID3D11DeviceContext*, D3DXMATRIX, D3DXVECTOR4, D3DXMATRIX, D3DXMATRIX, D3DXMATRIX);  
+		bool SetShaderParameters(ID3D11DeviceContext*, D3DXMATRIX, D3DXMATRIX, D3DXMATRIX);  
 		void RenderShader(ID3D11DeviceContext*, int indexCount, int indexStart, int vertexStart);
 
 		ID3D11VertexShader* m_vertexShader;  

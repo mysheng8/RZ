@@ -51,7 +51,7 @@ D3DXVECTOR3 RZCameraBase::GetRotation()
 RZSimpleCamera::RZSimpleCamera(InputClass *input)
 {
 	m_pInput=input;
-	m_camMoveSpeed=0.01f;
+	m_camMoveSpeed=0.008f;
 	m_camRotSpeed=0.5f;
 	m_focusDistance=10.0f;
 }

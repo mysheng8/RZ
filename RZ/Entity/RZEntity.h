@@ -1,7 +1,9 @@
+#pragma once
 #ifndef _RZENTITY_H_
 #define _RZENTITY_H_
 
-
+#include <d3d11.h>  
+#include <d3dx10math.h>  
 #include <stdio.h>
 #include <vector>
 #include "RZMesh.h"
@@ -11,24 +13,25 @@ using namespace std;
 
 namespace RZ
 {
+	struct RZEntityParams
+	{
+		RZMesh*			pMesh;
+	};
+
 	class RZEntity
 	{
+	//friend class RZEntityFactory;
 	public:
 		RZEntity();
 		RZEntity(const RZEntity& other);
 		virtual ~RZEntity();
-		bool Initialize(ID3D11Device* device,HWND hwnd, char* meshFileName,char* texFileName);
-		bool RegisterShader(char* vsFileName,char* psFileName);
-		void Shutdown();
-		bool Render(ID3D11DeviceContext* pd3dDeviceContext,D3DXMATRIX, D3DXVECTOR4, D3DXMATRIX, D3DXMATRIX, D3DXMATRIX);
+		bool Initialize(RZEntityParams* params);
+		bool Render(ID3D11DeviceContext* pd3dDeviceContext, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix);
+		void ShutDown();
+
 	private:
-		UINT id;
-		RZMesh* pMesh;
-		vector<RZShader*> pShaderList;
-		vector<RZTexture*> pTexList;
-
+		RZMesh*			m_mesh;
 	};
-
 };
 
 #endif

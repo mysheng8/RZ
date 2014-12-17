@@ -72,8 +72,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="EntityManager\RZEntityFactory.cpp" />
-    <ClCompile Include="EntityManager\RZShaderFactory.cpp" />
+    <ClCompile Include="EntityManager\RZEntityManager.cpp" />
+    <ClCompile Include="EntityManager\RZLightManager.cpp" />
+    <ClCompile Include="EntityManager\RZMaterialManager.cpp" />
+    <ClCompile Include="EntityManager\RZShaderManager.cpp" />
+    <ClCompile Include="EntityManager\RZTextureManager.cpp" />
     <ClCompile Include="Entity\FbxImporter\RZFbxImporter.cpp" />
     <ClCompile Include="Entity\FbxImporter\RZIntermediateMesh.cpp" />
     <ClCompile Include="Entity\RZCamera.cpp" />
@@ -81,17 +84,22 @@
     <ClCompile Include="Entity\RZLight.cpp" />
     <ClCompile Include="Entity\RZMaterial.cpp" />
     <ClCompile Include="Entity\RZMesh.cpp" />
+    <ClCompile Include="Entity\RZPrefab.cpp" />
     <ClCompile Include="Entity\RZShader.cpp" />
     <ClCompile Include="Entity\RZTexture.cpp" />
     <ClCompile Include="Framework\D3dClass.cpp" />
     <ClCompile Include="Framework\GraphicsClass.cpp" />
     <ClCompile Include="Framework\InputClass.cpp" />
+    <ClCompile Include="Framework\RZRenderQueue.cpp" />
     <ClCompile Include="Framework\SystemClass.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="EntityManager\RZEntityFactory.h" />
-    <ClInclude Include="EntityManager\RZShaderFactory.h" />
+    <ClInclude Include="EntityManager\RZEntityManager.h" />
+    <ClInclude Include="EntityManager\RZLightManager.h" />
+    <ClInclude Include="EntityManager\RZMaterialManager.h" />
+    <ClInclude Include="EntityManager\RZShaderManager.h" />
+    <ClInclude Include="EntityManager\RZTextureManager.h" />
     <ClInclude Include="Entity\FbxImporter\RZFbxImporter.h" />
     <ClInclude Include="Entity\FbxImporter\RZIntermediateMesh.h" />
     <ClInclude Include="Entity\RZCamera.h" />
@@ -99,18 +107,20 @@
     <ClInclude Include="Entity\RZLight.h" />
     <ClInclude Include="Entity\RZMaterial.h" />
     <ClInclude Include="Entity\RZMesh.h" />
+    <ClInclude Include="Entity\RZPrefab.h" />
     <ClInclude Include="Entity\RZShader.h" />
     <ClInclude Include="Entity\RZTexture.h" />
     <ClInclude Include="Framework\D3dClass.h" />
     <ClInclude Include="Framework\GraphicsClass.h" />
     <ClInclude Include="Framework\InputClass.h" />
+    <ClInclude Include="Framework\RZRenderQueue.h" />
     <ClInclude Include="Framework\SystemClass.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resource\shader\default.ps" />
-    <None Include="Resource\shader\default.vs" />
-    <None Include="Resource\shader\test.ps" />
-    <None Include="Resource\shader\test.vs" />
+    <None Include="Resource\shader\basic.ps" />
+    <None Include="Resource\shader\basic.vs" />
+    <None Include="Resource\shader\renderToQuad.ps" />
+    <None Include="Resource\shader\renderToQuad.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

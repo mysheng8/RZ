@@ -14,9 +14,9 @@ namespace RZ
 		RZTexture(const RZTexture &other);
 		~RZTexture();
 		bool Initialize(ID3D11Device* device, char* texFileName);
-		void Render(ID3D11DeviceContext* pDeviceContext);
+		void Render(ID3D11DeviceContext* pDeviceContext,int slot);
 		ID3D11ShaderResourceView* GetShaderResourceView(){return m_pShaderResourceView;};
-		void Release();
+		void ShutDown();
 
 	private:
 		ID3D11ShaderResourceView* m_pShaderResourceView;

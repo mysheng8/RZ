@@ -48,7 +48,7 @@ bool RZTexture::Initialize(ID3D11Device* device,char* texFileName)
 
 }
 
-void RZTexture::Release()
+void RZTexture::ShutDown()
 {
 	if(m_pSampler)
 	{
@@ -63,8 +63,8 @@ void RZTexture::Release()
 	}
 }
 
-void RZTexture::Render(ID3D11DeviceContext* pDeviceContext)
+void RZTexture::Render(ID3D11DeviceContext* pDeviceContext,int slot)
 {
-	pDeviceContext->PSSetSamplers(0,1,&m_pSampler);
-	pDeviceContext->PSSetShaderResources(0,1,&m_pShaderResourceView);
+	pDeviceContext->PSSetSamplers(slot,1,&m_pSampler);
+	pDeviceContext->PSSetShaderResources(slot,1,&m_pShaderResourceView);
 }

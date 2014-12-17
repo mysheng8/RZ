@@ -5,10 +5,13 @@
 #include "D3dClass.h"
 #include "InputClass.h"
 #include "../Entity/RZcamera.h"
-#include "../Entity/RZEntity.h"
-#include "../Entity/RZLight.h"
-#include "../Entity/ModelClass.h"
-#include "../Entity/ColorShaderClass.h"
+#include "../Entity/RZPrefab.h"
+#include "../EntityManager/RZEntityManager.h"
+#include "../EntityManager/RZTextureManager.h"
+#include "../EntityManager/RZShaderManager.h"
+#include "../EntityManager/RZMaterialManager.h"
+#include "../EntityManager/RZLightManager.h"
+
 
 using namespace RZ;
 
@@ -16,7 +19,7 @@ const bool FULL_SCREEN = false;
 const bool VSYNC_ENABLED = true;  
 const float SCREEN_DEPTH = 1000.0f;  
 const float SCREEN_NEAR = 0.1f;
-
+const int MAXINSTANCENUMBER = 64;
 class GraphicsClass  
 {  
 public:  
@@ -25,6 +28,8 @@ public:
     ~GraphicsClass();  
   
     bool Initialize(int, int, HWND, InputClass*);
+
+	bool BeginScene();
     void Shutdown();  
     bool Frame();  
   
@@ -33,9 +38,18 @@ private:
 
 private:
 	D3DClass* m_D3D;
-	RZCameraBase* m_Camera;  
-    RZEntity* m_Entity;  
-	RZLight* m_Light;
+	RZCameraBase* m_camera;  
+    RZEntityManager* m_entityManager;  
+	RZTextureManager* m_texManager;
+	RZShaderManager* m_shaderManager;
+	RZMaterialManager* m_matManager;
+	RZLightManager* m_lightManager;
+	map<string,vector<RZPrefab*> > m_prefabMap;
+
+
+	void AddPrefab(string name, D3DMATRIX trans);
+	ID3D11Buffer* cbPerInstanceBuffer;
+
 }; 
 
 #endif

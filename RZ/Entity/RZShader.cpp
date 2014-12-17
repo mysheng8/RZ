@@ -20,36 +20,13 @@ RZShader::~RZShader()
 {  
 }
 
-bool RZShader::Initialize(ID3D11Device* device, HWND hwnd)  
-{  
-    bool result;  
-  
-  
-    // Initialize the vertex and pixel shaders.  
-    result = InitializeShader(device, hwnd, "E:\\mine\\RZ\\RZ\\Resource\\shader\\default.vs", "E:\\mine\\RZ\\RZ\\Resource\\shader\\default.ps");  
-    if(!result)  
-    {  
-        return false;  
-    }  
-  
-    return true;  
-}
-
-void RZShader::Shutdown()  
-{  
-    // Shutdown the vertex and pixel shaders as well as the related objects.  
-    ShutdownShader();  
-  
-    return;  
-}
-
-bool RZShader::Render(ID3D11DeviceContext* deviceContext, int indexCount, int indexStart, int vertexStart, D3DXMATRIX worldViewProjection, D3DXVECTOR4 lightDir, D3DXMATRIX worldMatrix,D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix)  
+bool RZShader::Render(ID3D11DeviceContext* deviceContext, int indexCount, int indexStart, int vertexStart, D3DXMATRIX worldMatrix,D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix)  
 {  
     bool result;  
   
   
     // Set the shader parameters that it will use for rendering.  
-    result = SetShaderParameters(deviceContext, worldViewProjection, lightDir, worldMatrix, viewMatrix, projectionMatrix);  
+    result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix);  
     if(!result)  
     {  
         return false;  
@@ -61,16 +38,16 @@ bool RZShader::Render(ID3D11DeviceContext* deviceContext, int indexCount, int in
     return true;  
 }
 
-bool RZShader::InitializeShader(ID3D11Device* device, HWND hwnd, CHAR* vsFilename, CHAR* psFilename)  
+bool RZShader::Initialize(ID3D11Device* device, HWND hwnd, ID3D11Buffer* matrixBuffer, CHAR* vsFilename, CHAR* psFilename)  
 {  
     HRESULT result;  
     ID3D10Blob* errorMessage;  
     ID3D10Blob* vertexShaderBuffer;  
     ID3D10Blob* pixelShaderBuffer;  
-	D3D11_INPUT_ELEMENT_DESC polygonLayout[4];
+	D3D11_INPUT_ELEMENT_DESC polygonLayout[5];
     unsigned int numElements;  
     D3D11_BUFFER_DESC matrixBufferDesc;  
-  
+	m_matrixBuffer=matrixBuffer;
   
     // Initialize the pointers this function will use to null.  
     errorMessage = 0;  
@@ -79,7 +56,7 @@ bool RZShader::InitializeShader(ID3D11Device* device, HWND hwnd, CHAR* vsFilenam
   
  
     // Compile the vertex shader code. 
-    result = D3DX11CompileFromFile(vsFilename, NULL, NULL, "ColorVertexShader", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL,   
+    result = D3DX11CompileFromFile(vsFilename, NULL, NULL, "BasicVertexShader", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL,   
                        &vertexShaderBuffer, &errorMessage, NULL);  
     if(FAILED(result))  
     {   
@@ -96,7 +73,7 @@ bool RZShader::InitializeShader(ID3D11Device* device, HWND hwnd, CHAR* vsFilenam
     }  
   
     // Compile the pixel shader code.  
-    result = D3DX11CompileFromFile(psFilename, NULL, NULL, "ColorPixelShader", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL,   
+    result = D3DX11CompileFromFile(psFilename, NULL, NULL, "BasicPixelShader", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL,   
                        &pixelShaderBuffer, &errorMessage, NULL);  
     if(FAILED(result))  
     {    
@@ -144,21 +121,29 @@ bool RZShader::InitializeShader(ID3D11Device* device, HWND hwnd, CHAR* vsFilenam
     polygonLayout[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;  
     polygonLayout[1].InstanceDataStepRate = 0;  
 
-	polygonLayout[2].SemanticName = "COLOR";  
+	polygonLayout[2].SemanticName = "TANGENT";  
     polygonLayout[2].SemanticIndex = 0;  
-    polygonLayout[2].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;  
+    polygonLayout[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;  
     polygonLayout[2].InputSlot = 0;  
     polygonLayout[2].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;  
     polygonLayout[2].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;  
-    polygonLayout[2].InstanceDataStepRate = 0; 
+    polygonLayout[2].InstanceDataStepRate = 0;
 
-	polygonLayout[3].SemanticName = "UV";  
+	polygonLayout[3].SemanticName = "COLOR";  
     polygonLayout[3].SemanticIndex = 0;  
-    polygonLayout[3].Format = DXGI_FORMAT_R32G32_FLOAT;  
+    polygonLayout[3].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;  
     polygonLayout[3].InputSlot = 0;  
     polygonLayout[3].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;  
     polygonLayout[3].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;  
-    polygonLayout[3].InstanceDataStepRate = 0;  
+    polygonLayout[3].InstanceDataStepRate = 0; 
+
+	polygonLayout[4].SemanticName = "UV";  
+    polygonLayout[4].SemanticIndex = 0;  
+    polygonLayout[4].Format = DXGI_FORMAT_R32G32_FLOAT;  
+    polygonLayout[4].InputSlot = 0;  
+    polygonLayout[4].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;  
+    polygonLayout[4].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;  
+    polygonLayout[4].InstanceDataStepRate = 0;  
 
     // Get a count of the elements in the layout.  
     numElements = sizeof(polygonLayout) / sizeof(polygonLayout[0]);  
@@ -177,36 +162,11 @@ bool RZShader::InitializeShader(ID3D11Device* device, HWND hwnd, CHAR* vsFilenam
     pixelShaderBuffer->Release();  
     pixelShaderBuffer = 0;  
   
-    // Setup the description of the dynamic matrix constant buffer that is in the vertex shader.  
-    matrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;  
-    matrixBufferDesc.ByteWidth = sizeof(MatrixBufferType);  
-    matrixBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;  
-    matrixBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;  
-    matrixBufferDesc.MiscFlags = 0;  
-    matrixBufferDesc.StructureByteStride = 0;  
-  
-    // Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class. 
-
-
-
-    result = device->CreateBuffer(&matrixBufferDesc, NULL, &m_matrixBuffer);  
-    if(FAILED(result))  
-    {  
-        return false;  
-    }  
-  
     return true;  
 }
 
-void RZShader::ShutdownShader()  
+void RZShader::Shutdown()  
 {  
-    // Release the matrix constant buffer.  
-    if(m_matrixBuffer)  
-    {  
-        m_matrixBuffer->Release();  
-        m_matrixBuffer = 0;  
-    }  
-  
     // Release the layout.  
     if(m_layout)  
     {  
@@ -228,6 +188,8 @@ void RZShader::ShutdownShader()
         m_vertexShader = 0;  
     }  
   
+	m_matrixBuffer=0;
+
     return;  
 }
 
@@ -266,7 +228,7 @@ void RZShader::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwnd, CHA
     return;  
 }
 
-bool RZShader::SetShaderParameters(ID3D11DeviceContext* deviceContext, D3DXMATRIX worldViewProjection, D3DXVECTOR4 lightDir, D3DXMATRIX worldMatrix,D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix)  
+bool RZShader::SetShaderParameters(ID3D11DeviceContext* deviceContext, D3DXMATRIX worldMatrix,D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix)  
 {  
     HRESULT result;  
     D3D11_MAPPED_SUBRESOURCE mappedResource;  
@@ -276,7 +238,6 @@ bool RZShader::SetShaderParameters(ID3D11DeviceContext* deviceContext, D3DXMATRI
 	//Make sure to transpose matrices before sending them into the shader, this is a requirement for DirectX 11.   
   
     // Transpose the matrices to prepare them for the shader.
-	D3DXMatrixTranspose(&worldViewProjection, &worldViewProjection);
     D3DXMatrixTranspose(&worldMatrix, &worldMatrix);  
     D3DXMatrixTranspose(&viewMatrix, &viewMatrix);  
     D3DXMatrixTranspose(&projectionMatrix, &projectionMatrix);  
@@ -292,8 +253,6 @@ bool RZShader::SetShaderParameters(ID3D11DeviceContext* deviceContext, D3DXMATRI
     dataPtr = (MatrixBufferType*)mappedResource.pData;  
   
     // Copy the matrices into the constant buffer. 
-	dataPtr->worldViewProjection = worldViewProjection; 
-	dataPtr->lightDir=lightDir;
     dataPtr->world = worldMatrix;  
     dataPtr->view = viewMatrix;  
     dataPtr->projection = projectionMatrix;  
@@ -306,7 +265,6 @@ bool RZShader::SetShaderParameters(ID3D11DeviceContext* deviceContext, D3DXMATRI
   
     // Finanly set the constant buffer in the vertex shader with the updated values.  
     deviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_matrixBuffer);
-	deviceContext->PSSetConstantBuffers(bufferNumber, 1, &m_matrixBuffer); 
   
     return true;  
 }
