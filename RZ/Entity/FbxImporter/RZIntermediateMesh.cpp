@@ -91,7 +91,7 @@ INTERMEDIATE_INDEX_BUFFER* RZIntermediateMesh::AddIndexBuffer( INTERMEDIATE_MESH
 //--------------------------------------------------------------------------------------
 // Add a mesh
 //--------------------------------------------------------------------------------------
-INTERMEDIATE_MESH* RZIntermediateMesh::AddMesh( const char* pszName, D3DXMATRIX TransformMatrix )
+INTERMEDIATE_MESH* RZIntermediateMesh::AddMesh( const char* pszName, const XMFLOAT4X4 &TransformMatrix )
 {
     INTERMEDIATE_MESH* pMesh = new INTERMEDIATE_MESH;
     if( !pMesh )
@@ -192,7 +192,7 @@ INTERMEDIATE_SUBSET* RZIntermediateMesh::AddSubset( INTERMEDIATE_MESH* pMesh,
 }
 
 
-bool RZIntermediateMesh::SaveAsRZMesh( char* szFileName )
+bool RZIntermediateMesh::SaveAsRZMesh( const char* szFileName )
 {
     ofstream fout;
 
@@ -359,7 +359,7 @@ bool RZIntermediateMesh::SaveAsRZMesh( char* szFileName )
 }
 
 
-bool RZIntermediateMesh::SaveAsRZMeshASCII( char* szFileName )
+bool RZIntermediateMesh::SaveAsRZMeshASCII(const char* szFileName )
 {
     ofstream fout;
 
@@ -539,10 +539,10 @@ bool RZIntermediateMesh::SaveAsRZMeshASCII( char* szFileName )
 				<<((RZVertexType*)pVBH->pVertices)[i].normal.x<<" "
 				<<((RZVertexType*)pVBH->pVertices)[i].normal.y<<" "
 				<<((RZVertexType*)pVBH->pVertices)[i].normal.z<<" "
-				<<((RZVertexType*)pVBH->pVertices)[i].color.r<<" "
-				<<((RZVertexType*)pVBH->pVertices)[i].color.g<<" "
-				<<((RZVertexType*)pVBH->pVertices)[i].color.b<<" "
-				<<((RZVertexType*)pVBH->pVertices)[i].color.a<<" "
+				<<((RZVertexType*)pVBH->pVertices)[i].color.x<<" "
+				<<((RZVertexType*)pVBH->pVertices)[i].color.y<<" "
+				<<((RZVertexType*)pVBH->pVertices)[i].color.z<<" "
+				<<((RZVertexType*)pVBH->pVertices)[i].color.w<<" "
 				<<((RZVertexType*)pVBH->pVertices)[i].uv.x<<" "
 				<<((RZVertexType*)pVBH->pVertices)[i].uv.y<<" ";
 			

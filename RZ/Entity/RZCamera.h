@@ -1,7 +1,8 @@
+#pragma once
 #ifndef _RZCamera_H_
 #define _RZCamera_H_
 
-#include <d3dx10math.h>
+#include "../Framework/RZCommon.h"
 #include "../Framework/InputClass.h"
 
 namespace RZ
@@ -18,17 +19,17 @@ namespace RZ
 		virtual void SetPosition(float, float, float);  
 		virtual void SetRotation(float, float, float);  
   
-		virtual D3DXVECTOR3 GetPosition();  
-		virtual D3DXVECTOR3 GetRotation();  
+		virtual XMFLOAT3 GetPosition();  
+		virtual XMFLOAT3 GetRotation();  
 
 		virtual void UpdateTransform()=0;
 		virtual void Render()=0;  
-		virtual void GetViewMatrix(D3DXMATRIX& outMatrix){outMatrix = m_viewMatrix;};  
+		virtual void GetViewMatrix(XMMATRIX& outMatrix){outMatrix = XMLoadFloat4x4(&m_viewMatrix);};  
 
  	protected:  
 		float m_positionX, m_positionY, m_positionZ;  
 		float m_rotationX, m_rotationY, m_rotationZ;  
-		D3DXMATRIX m_viewMatrix; 
+		XMFLOAT4X4 m_viewMatrix; 
 	};
 
 	class RZSimpleCamera: public RZCameraBase
@@ -42,7 +43,7 @@ namespace RZ
 		virtual void UpdateTransform();
 
 		virtual void Render();  
-		virtual void GetViewMatrix(D3DXMATRIX&);  
+		virtual void GetViewMatrix(XMMATRIX&);  
   
 	private:
 		InputClass* m_pInput;

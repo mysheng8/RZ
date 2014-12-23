@@ -17,7 +17,7 @@ RZTexture::~RZTexture()
 {
 }
 
-bool RZTexture::Initialize(ID3D11Device* device,char* texFileName)
+bool RZTexture::Initialize(ID3D11Device* device,const char* texFileName)
 {
 	HRESULT result;  
 	D3D11_SAMPLER_DESC samplerDesc;
@@ -45,7 +45,7 @@ bool RZTexture::Initialize(ID3D11Device* device,char* texFileName)
     {
         return false;
     } 
-
+	return true;
 }
 
 void RZTexture::ShutDown()

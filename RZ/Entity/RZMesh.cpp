@@ -37,7 +37,7 @@ RZMesh::~RZMesh()
 {
 }
 
-bool RZMesh::CreateFromFile(ID3D11Device* device, char* modelFilename)
+bool RZMesh::CreateFromFile(ID3D11Device* device, const char* modelFilename)
 {
 	ifstream  fin;
     // Open the file
@@ -153,10 +153,10 @@ void RZMesh::DebugBuffer(ID3D11Device* device,ID3D11DeviceContext* pd3dDeviceCon
 			<<pVB[i].normal.x<<","
 			<<pVB[i].normal.y<<","
 			<<pVB[i].normal.z<<","
-			<<pVB[i].color.r<<","
-			<<pVB[i].color.g<<","
-			<<pVB[i].color.b<<","
-			<<pVB[i].color.a<<","
+			<<pVB[i].color.x<<","
+			<<pVB[i].color.y<<","
+			<<pVB[i].color.z<<","
+			<<pVB[i].color.w<<","
 			<<pVB[i].uv.x<<","
 			<<pVB[i].uv.y<<",";
 		fout<<endl;
@@ -189,7 +189,7 @@ bool RZMesh::CreateVertexBuffer(ID3D11Device* pd3dDevice,RZMESH_VERTEX_BUFFER_HE
 
 bool RZMesh::CreateIndexBuffer(ID3D11Device* pd3dDevice,RZMESH_INDEX_BUFFER_HEADER* pHeader, void* pIndices)
 {
-	bool hr;
+	HRESULT hr;
 
 	pHeader->DataOffset = 0;
     //Index Buffer
@@ -204,7 +204,11 @@ bool RZMesh::CreateIndexBuffer(ID3D11Device* pd3dDevice,RZMESH_INDEX_BUFFER_HEAD
 	D3D11_SUBRESOURCE_DATA InitData;
     InitData.pSysMem = pIndices;
     hr = pd3dDevice->CreateBuffer( &bufferDesc, &InitData, &pHeader->pIB11 );
-	return hr;
+	if(FAILED(hr))  
+    {  
+        return false;  
+    }
+	return true;
 
 }
 
@@ -234,7 +238,7 @@ bool RZMesh::ReleaseModel()
 
 
 #define MAX_D3D11_VERTEX_STREAMS D3D11_IA_VERTEX_INPUT_RESOURCE_SLOT_COUNT
-bool RZMesh::RenderMesh(UINT iMesh,ID3D11DeviceContext* pd3dDeviceContext, D3DXMATRIX worldMatrix,D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix)
+bool RZMesh::RenderMesh(UINT iMesh,ID3D11DeviceContext* pd3dDeviceContext, const XMMATRIX &worldMatrix,const XMMATRIX &viewMatrix, const XMMATRIX &projectionMatrix)
 {
 	RZMESH_MESH* pMesh = &m_pMeshArray[iMesh];
 
@@ -269,8 +273,8 @@ bool RZMesh::RenderMesh(UINT iMesh,ID3D11DeviceContext* pd3dDeviceContext, D3DXM
     RZMESH_SUBSET* pSubset = NULL;
     D3D11_PRIMITIVE_TOPOLOGY PrimType;
 
-	D3DXMATRIX localMatrix=m_pMeshArray[iMesh].TransformMatrix;
-	worldMatrix=worldMatrix*localMatrix;
+	XMMATRIX localMatrix=XMLoadFloat4x4(&(m_pMeshArray[iMesh].TransformMatrix));
+	XMMATRIX WM=worldMatrix*localMatrix;
 
     for( int subset = 0; subset < pMesh->NumSubsets; subset++ )
     {
@@ -284,13 +288,13 @@ bool RZMesh::RenderMesh(UINT iMesh,ID3D11DeviceContext* pd3dDeviceContext, D3DXM
 
 		RZMaterial* pMaterial=m_matList[pSubset->MaterialID];
 
-        pMaterial->Render( pd3dDeviceContext, IndexCount, IndexStart, VertexStart, worldMatrix, viewMatrix, projectionMatrix );
+        pMaterial->Render( pd3dDeviceContext, IndexCount, IndexStart, VertexStart, WM, viewMatrix, projectionMatrix );
     }
 	return true;
 }
 
 
-bool RZMesh::Render(ID3D11DeviceContext* pd3dDeviceContext, D3DXMATRIX worldMatrix,D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix)
+bool RZMesh::Render(ID3D11DeviceContext* pd3dDeviceContext, const XMMATRIX &worldMatrix,const XMMATRIX &viewMatrix, const XMMATRIX &projectionMatrix)
 {
 	if( !m_pStaticMeshData || !m_pMeshHeader )
         return false;

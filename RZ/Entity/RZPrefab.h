@@ -17,14 +17,14 @@ namespace RZ
 		RZPrefab();
 		RZPrefab(const RZPrefab& other);
 		virtual ~RZPrefab();
-		bool Initialize(RZEntity* entity, D3DXMATRIX transform);
+		bool Initialize(RZEntity* entity, const XMFLOAT4X4 &transform);
 		void ShutDown();
-		bool Render(ID3D11DeviceContext* pd3dDeviceContext, D3DXMATRIX worldMatrix,D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix);
-		D3DXMATRIX GetTransform(){return m_trans; };
+		bool Render(ID3D11DeviceContext* pd3dDeviceContext,const XMMATRIX &worldMatrix,const XMMATRIX &viewMatrix, const XMMATRIX &projectionMatrix);
+		XMFLOAT4X4 GetTransform(){return m_trans; };
 	private:
 		int m_id;
 		RZEntity* m_entity;
-		D3DXMATRIX m_trans;
+		XMFLOAT4X4 m_trans;
 	};
 
 

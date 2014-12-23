@@ -29,7 +29,7 @@ void RZMaterial::Initialize(RZShader* shader,RZMatParams* params, int numTex)
 
 }
 
-bool RZMaterial::Render(ID3D11DeviceContext* deviceContext, int indexCount, int indexStart, int vertexStart, D3DXMATRIX worldMatrix,D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix)
+bool RZMaterial::Render(ID3D11DeviceContext* deviceContext, int indexCount, int indexStart, int vertexStart, const XMMATRIX &worldMatrix,const XMMATRIX &viewMatrix, const XMMATRIX &projectionMatrix)
 {
 	for(int i=0;i!=m_numTex;++i)
 	{

@@ -1,8 +1,10 @@
+#pragma once
 #ifndef _GRAPHICSCLASS_H_  
 #define _GRAPHICSCLASS_H_ 
 
 #include <windows.h>
-#include "D3dClass.h"
+#include "RZCommon.h"
+#include "RZD3dRender.h"
 #include "InputClass.h"
 #include "../Entity/RZcamera.h"
 #include "../Entity/RZPrefab.h"
@@ -37,7 +39,7 @@ private:
     bool Render();  
 
 private:
-	D3DClass* m_D3D;
+	RZD3dRender* m_D3D;
 	RZCameraBase* m_camera;  
     RZEntityManager* m_entityManager;  
 	RZTextureManager* m_texManager;
@@ -47,7 +49,7 @@ private:
 	map<string,vector<RZPrefab*> > m_prefabMap;
 
 
-	void AddPrefab(string name, D3DMATRIX trans);
+	void AddPrefab(string name, const XMFLOAT4X4  &trans);
 	ID3D11Buffer* cbPerInstanceBuffer;
 
 }; 

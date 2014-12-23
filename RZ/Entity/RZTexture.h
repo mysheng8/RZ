@@ -1,3 +1,4 @@
+#pragma once
 #ifndef _RZTEXTURE_H_
 #define _RZTEXTURE_H_
 
@@ -13,7 +14,7 @@ namespace RZ
 		RZTexture();
 		RZTexture(const RZTexture &other);
 		~RZTexture();
-		bool Initialize(ID3D11Device* device, char* texFileName);
+		bool Initialize(ID3D11Device* device, const char* texFileName);
 		void Render(ID3D11DeviceContext* pDeviceContext,int slot);
 		ID3D11ShaderResourceView* GetShaderResourceView(){return m_pShaderResourceView;};
 		void ShutDown();

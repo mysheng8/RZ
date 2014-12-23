@@ -1,11 +1,8 @@
+#pragma once
 #ifndef _RZMATERIAL_H_
 #define _RZMATERIAL_H_
 
-#include <d3d11.h>  
-#include <d3dx10math.h>  
-#include <d3dx11async.h>
-#include <stdio.h>
-#include <vector>
+
 
 #include "RZshader.h"
 #include "RZTexture.h"
@@ -36,9 +33,9 @@ namespace RZ
 
 	struct RZMatBuffer
 	{
-		D3DXCOLOR				ambience;
-		D3DXCOLOR				emissive;				
-		D3DXVECTOR2				specular;    //x--glossness, y--roughness
+		XMFLOAT4				ambience;
+		XMFLOAT4				emissive;				
+		XMFLOAT2				specular;    //x--glossness, y--roughness
 	};
 
 	class RZMaterial
@@ -51,8 +48,8 @@ namespace RZ
 		void Initialize(RZShader* shader,RZMatParams* params, int numTex);
 		void ShutDown();
 		void AddTexture(int slot, RZTexture* tex){m_texs[slot]=tex;};
-		bool Render(ID3D11DeviceContext* deviceContext, int indexCount, int indexStart, int vertexStart, D3DXMATRIX worldMatrix,D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix);
-		bool GetParams(RZMatParams& outParams){return m_params;};
+		bool Render(ID3D11DeviceContext* deviceContext, int indexCount, int indexStart, int vertexStart,  const XMMATRIX &worldMatrix,const XMMATRIX &viewMatrix, const XMMATRIX &projectionMatrix);
+		//bool GetParams(RZMatParams& outParams){outParams= m_params;return true;};
 		
 
 	private:

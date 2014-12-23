@@ -2,12 +2,7 @@
 #ifndef _RZMATERIALMANAGER_H_
 #define _RZMATERIALMANAGER_H_
 
-#include "d3d11.h"
-#include "d3dx10math.h"
-#include <stdio.h>
-#include <string>
-#include <map>
-#include <d3dx11async.h> 
+
 #include "../Entity/RZMaterial.h"
 #include "RZShaderManager.h"
 #include "RZTextureManager.h"

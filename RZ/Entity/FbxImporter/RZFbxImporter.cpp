@@ -64,25 +64,25 @@ bool RZFbxImporter::RZVertexReader::GetVerticesFromBuffer(void** pVertices)
 	for(i=0;i!=num_VertexInfo;++i)
 	{
 		RZVertexType *pRZVert=((RZVertexType*)(*pVertices)+i);
-		pRZVert->position[0]=(m_vList[i]).pos[0];
-		pRZVert->position[1]=(m_vList[i]).pos[1];
-		pRZVert->position[2]=(m_vList[i]).pos[2];
+		pRZVert->position.x=(m_vList[i]).pos[0];
+		pRZVert->position.y=(m_vList[i]).pos[1];
+		pRZVert->position.z=(m_vList[i]).pos[2];
 
-		pRZVert->normal[0]=(m_vList[i]).normal[0];
-		pRZVert->normal[1]=(m_vList[i]).normal[1];
-		pRZVert->normal[2]=(m_vList[i]).normal[2];
+		pRZVert->normal.x=(m_vList[i]).normal[0];
+		pRZVert->normal.y=(m_vList[i]).normal[1];
+		pRZVert->normal.z=(m_vList[i]).normal[2];
 
-		pRZVert->tangent[0]=(m_vList[i]).tangent[0];
-		pRZVert->tangent[1]=(m_vList[i]).tangent[1];
-		pRZVert->tangent[2]=(m_vList[i]).tangent[2];
+		pRZVert->tangent.x=(m_vList[i]).tangent[0];
+		pRZVert->tangent.y=(m_vList[i]).tangent[1];
+		pRZVert->tangent.z=(m_vList[i]).tangent[2];
 
-		pRZVert->color.r=(m_vList[i]).color[0];
-		pRZVert->color.g=(m_vList[i]).color[1];
-		pRZVert->color.b=(m_vList[i]).color[2];
-		pRZVert->color.a=(m_vList[i]).color[3];
+		pRZVert->color.x=(m_vList[i]).color[0];
+		pRZVert->color.y=(m_vList[i]).color[1];
+		pRZVert->color.z=(m_vList[i]).color[2];
+		pRZVert->color.w=(m_vList[i]).color[3];
 
-		pRZVert->uv[0]=(m_vList[i]).uv1[0];
-		pRZVert->uv[1]=(m_vList[i]).uv1[1];
+		pRZVert->uv.x=(m_vList[i]).uv1[0];
+		pRZVert->uv.y=(m_vList[i]).uv1[1];
 	}
 	return true;
 }
@@ -450,7 +450,7 @@ bool RZFbxImporter::ConvertToRZMesh(FbxNode* pNode,int &currentVertexPos, int &c
 
 	double* pMatrix = pNode->EvaluateGlobalTransform();
 
-	D3DXMATRIX pTransformMatrix = D3DXMATRIX(	pMatrix[0],pMatrix[1],pMatrix[2],pMatrix[3],
+	XMFLOAT4X4 pTransformMatrix = XMFLOAT4X4(	pMatrix[0],pMatrix[1],pMatrix[2],pMatrix[3],
 												pMatrix[4],pMatrix[5],pMatrix[6],pMatrix[7],
 												pMatrix[8],pMatrix[9],pMatrix[10],pMatrix[11],
 												pMatrix[12],pMatrix[13],pMatrix[14],pMatrix[15]);

@@ -2,11 +2,13 @@
 #ifndef RZFBXIMPORTER_H
 #define RZFBXIMPORTER_H
 
+#include <stdio.h>
+#include<string>
 #include<map>
 #include <fbxsdk.h>
 #include "..\RZmesh.h"
 #include "RZIntermediateMesh.h"
-#include<string>
+
 
 
 namespace RZ

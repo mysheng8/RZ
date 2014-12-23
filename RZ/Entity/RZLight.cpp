@@ -1,27 +1,31 @@
 #include "RZLight.h"
 
 using namespace RZ;
-/*
-RZLight::RZLight(InputClass* input)  
-{  
-	m_lightDir=D3DXVECTOR4(0,1.0f,-1.0f,0);
-	D3DXVec4Normalize(&m_lightDir,&m_lightDir);
-	m_pInput=input;
-	m_rotSpeed=0.005f;
-}
-*/
 
-RZLight::RZLight(int lightType, bool isStatic)  
+
+RZLight::RZLight()  
+{  
+}  
+
+
+void RZLight::Initialize(int lightType, bool isStatic)  
 {  
 	m_isStatic = isStatic;
 	m_lightType = lightType;
-	m_params = new LightParams();
+	m_params = new RZLightParams();
 
-	m_params->lightDir=D3DXVECTOR3(0,1.0f,-1.0f);
-	m_params->lightPos=D3DXVECTOR3(0,1.0f,-1.0f);
-	m_params->lightColor=D3DXVECTOR3(0,1.0f,-1.0f);
-	m_params->lightRange=D3DXVECTOR3(0,1.0f,-1.0f);
+	m_params->lightDir=XMFLOAT3(0,1.0f,-1.0f);
+	m_params->lightPos=XMFLOAT3(0,1.0f,-1.0f);
+	m_params->lightColor=XMFLOAT3(0,1.0f,-1.0f);
+	m_params->lightRange=XMFLOAT3(0,1.0f,-1.0f);
 
+	m_rMRTs=RZRenderMRTs::GetInstance();
+
+}
+
+void RZLight::Render(ID3D11DeviceContext* pDeviceContext)
+{
+	m_rMRTs->RenderLightingPass(pDeviceContext,m_lightType,m_params);
 }
 
 RZLight::RZLight(const RZLight& other)  
@@ -35,11 +39,11 @@ RZLight::~RZLight()
 
 void RZLight::SetLightDirection(float x,float y, float z)  
 {  
-	m_params->lightDir=D3DXVECTOR3(x,y,z);
+	m_params->lightDir=XMFLOAT3(x,y,z);
     return;  
 }
 
-void RZLight::GetLightDirection(D3DXVECTOR3& outDir)  
+void RZLight::GetLightDirection(XMFLOAT3& outDir)  
 {  
 	outDir=m_params->lightDir;
     return;  
@@ -47,11 +51,11 @@ void RZLight::GetLightDirection(D3DXVECTOR3& outDir)
 
 void RZLight::SetLightPosition(float x,float y, float z)  
 {  
-	m_params->lightPos=D3DXVECTOR3(x,y,z);
+	m_params->lightPos=XMFLOAT3(x,y,z);
     return;  
 }
 
-void RZLight::GetLightPosition(D3DXVECTOR3& outPos)  
+void RZLight::GetLightPosition(XMFLOAT3& outPos)  
 {  
 	outPos=m_params->lightPos;
     return;  
@@ -59,23 +63,23 @@ void RZLight::GetLightPosition(D3DXVECTOR3& outPos)
 
 void RZLight::SetLightColor(float x,float y, float z)  
 {  
-	m_params->lightDir=D3DXVECTOR3(x,y,z);
+	m_params->lightDir=XMFLOAT3(x,y,z);
     return;  
 }
 
-void RZLight::GetLightColor(D3DXVECTOR3& outColor)  
+void RZLight::GetLightColor(XMFLOAT3& outColor)  
 {  
 	outColor=m_params->lightColor;
     return;  
 }
 
-void RZLight::SetPointLightRange(float x)  
+void RZLight::SetLightRange(float x)  
 {  
 	m_params->lightRange.x=x;
     return;  
 }
 
-void RZLight::GetPointLightRange(float& x)  
+void RZLight::GetLightRange(float& x)  
 {  
 	x=m_params->lightRange.x;
     return;  
@@ -102,10 +106,10 @@ void RZLight::UpdateTransform()
 	{
 		MoveDelta delta=m_pInput->GetMouseDelta();
 
-		D3DXVECTOR3 lookAt;
+		XMFLOAT3 lookAt;
 
 
-		D3DXMATRIX rotationMatrix;
+		XMMATRIX rotationMatrix;
 		float yaw, pitch, roll;
 
 		lookAt.x = m_lightDir.x;  
@@ -116,7 +120,7 @@ void RZLight::UpdateTransform()
 		yaw   = -delta.x*m_rotSpeed;  
 		roll  = 0.0f; 
 
-		D3DXMatrixRotationYawPitchRoll(&rotationMatrix, yaw, pitch, roll); 
+		XMMATRIXRotationYawPitchRoll(&rotationMatrix, yaw, pitch, roll); 
 		D3DXVec3TransformCoord(&lookAt, &lookAt, &rotationMatrix);
 
 		m_lightDir.x=lookAt.x;

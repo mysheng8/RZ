@@ -2,12 +2,9 @@
 #ifndef _RZSHADERMANAGER_H_
 #define _RZSHADERMANAGER_H_
 
-#include "d3d11.h"
-#include "d3dx10math.h"
-#include <stdio.h>
-#include <string>
-#include <map>
-#include <d3dx11async.h> 
+
+
+#include "../Framework/RZCommon.h"
 #include "../Entity/RZShader.h"
 
 using namespace std;

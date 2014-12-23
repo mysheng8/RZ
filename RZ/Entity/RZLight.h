@@ -1,67 +1,51 @@
+#pragma once
 #ifndef _RZLIGHT_H_
 #define _RZLIGHT_H_
-#include <d3dx10math.h>
-//#include "../Framework/InputClass.h"
+
+#include "../Framework/RZRenderMRTs.h"
+
+
 
 namespace RZ
 {
-	struct RZLightParams
-	{
-		D3DXVECTOR3 lightPos;
-		D3DXVECTOR3 lightDir;
-		D3DXVECTOR3 lightColor;
-		D3DXVECTOR3 lightRange;	//x - point light range; yz - spot light Angles 
-	
-	};
-
 	class RZLight  
 	{  
 	public:  
-		RZLight(int lightType, bool isStatic);  
+		RZLight();  
 		RZLight(const RZLight&);
 
 		~RZLight(); 
 
-		void initilize();
+		void Initialize(int lightType, bool isStatic);
 
 		void SetLightDirection(float, float, float);  
-		void GetLightDirection(D3DXVECTOR3&);  
+		void GetLightDirection(XMFLOAT3&); 
+
 		void SetLightPosition(float, float, float); 
-		void GetLightPosition(D3DXVECTOR3&);  
+		void GetLightPosition(XMFLOAT3&); 
+
 		void SetLightColor(float, float, float);  
-		void GetLightColor(D3DXVECTOR3&); 
-		void SetPointLightRange(float);  
-		void GetPointLightRange(float&); 
+		void GetLightColor(XMFLOAT3&); 
+
+		void SetLightRange(float);  
+		void GetLightRange(float&); 
+
 		void SetSpotLightAngles(float, float);  
 		void GetSpotLightAngles(float&, float&); 
+
 		int GetLightType(){return m_lightType;};
+
+		void Render(ID3D11DeviceContext* pDeviceContext);
   
 	private:  
 		int m_lightType;	//1 - point light; 2 - spot light; 3 - direction light;
 		bool m_isStatic;
 		RZLightParams*			m_params;
+		RZRenderMRTs*			m_rMRTs;		
 		
 	};
 
 
-	/*
-	class RZLight  
-	{  
-	public:  
-		RZLight(InputClass *input);  
-		RZLight(const RZLight&);  
-		~RZLight();  
-
-		//void UpdateTransform();
-		void SetLightDirection(float, float, float);  
-		void GetLightDirection(D3DXVECTOR4&);  
-  
-	private:  
-		int m_lightType;	//1 - point light; 2 - spot light; 3 - direction light;
-		D3DXVECTOR4 m_lightDir;  
-		InputClass *m_pInput;
-		float m_rotSpeed;
-	};*/
 };
 
 #endif

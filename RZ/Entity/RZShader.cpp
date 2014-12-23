@@ -20,7 +20,7 @@ RZShader::~RZShader()
 {  
 }
 
-bool RZShader::Render(ID3D11DeviceContext* deviceContext, int indexCount, int indexStart, int vertexStart, D3DXMATRIX worldMatrix,D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix)  
+bool RZShader::Render(ID3D11DeviceContext* deviceContext, int indexCount, int indexStart, int vertexStart, const XMMATRIX &worldMatrix,const XMMATRIX &viewMatrix, const XMMATRIX &projectionMatrix)  
 {  
     bool result;  
   
@@ -38,7 +38,7 @@ bool RZShader::Render(ID3D11DeviceContext* deviceContext, int indexCount, int in
     return true;  
 }
 
-bool RZShader::Initialize(ID3D11Device* device, HWND hwnd, ID3D11Buffer* matrixBuffer, CHAR* vsFilename, CHAR* psFilename)  
+bool RZShader::Initialize(ID3D11Device* device, HWND hwnd, ID3D11Buffer* matrixBuffer, const char* vsFilename, const char* psFilename)  
 {  
     HRESULT result;  
     ID3D10Blob* errorMessage;  
@@ -193,7 +193,7 @@ void RZShader::Shutdown()
     return;  
 }
 
-void RZShader::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwnd, CHAR* shaderFilename)  
+void RZShader::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwnd,const CHAR* shaderFilename)  
 {  
     char* compileErrors;  
     unsigned long bufferSize, i;  
@@ -228,19 +228,12 @@ void RZShader::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwnd, CHA
     return;  
 }
 
-bool RZShader::SetShaderParameters(ID3D11DeviceContext* deviceContext, D3DXMATRIX worldMatrix,D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix)  
+bool RZShader::SetShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX &worldMatrix,const XMMATRIX &viewMatrix, const XMMATRIX &projectionMatrix)  
 {  
     HRESULT result;  
     D3D11_MAPPED_SUBRESOURCE mappedResource;  
     MatrixBufferType* dataPtr;  
     unsigned int bufferNumber;  
-  
-	//Make sure to transpose matrices before sending them into the shader, this is a requirement for DirectX 11.   
-  
-    // Transpose the matrices to prepare them for the shader.
-    D3DXMatrixTranspose(&worldMatrix, &worldMatrix);  
-    D3DXMatrixTranspose(&viewMatrix, &viewMatrix);  
-    D3DXMatrixTranspose(&projectionMatrix, &projectionMatrix);  
   
     // Lock the constant buffer so it can be written to.  
     result = deviceContext->Map(m_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);  
@@ -252,10 +245,10 @@ bool RZShader::SetShaderParameters(ID3D11DeviceContext* deviceContext, D3DXMATRI
     // Get a pointer to the data in the constant buffer.  
     dataPtr = (MatrixBufferType*)mappedResource.pData;  
   
-    // Copy the matrices into the constant buffer. 
-    dataPtr->world = worldMatrix;  
-    dataPtr->view = viewMatrix;  
-    dataPtr->projection = projectionMatrix;  
+    // Copy the matrices into the constant buffer. Transpose the matrices to prepare them for the shader.
+    dataPtr->world = XMMatrixTranspose(worldMatrix);  
+    dataPtr->view = XMMatrixTranspose(viewMatrix);  
+    dataPtr->projection = XMMatrixTranspose(projectionMatrix);  
   
     // Unlock the constant buffer.  
     deviceContext->Unmap(m_matrixBuffer, 0);  

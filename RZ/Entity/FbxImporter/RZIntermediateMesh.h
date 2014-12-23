@@ -43,11 +43,11 @@ namespace RZ
 	public:
 		RZIntermediateMesh(){};
 		virtual ~RZIntermediateMesh(){};
-		bool SaveAsRZMesh( char* szFileName );
-		bool SaveAsRZMeshASCII( char* szFileName );
+		bool SaveAsRZMesh(const char* szFileName );
+		bool SaveAsRZMeshASCII(const char* szFileName );
 		INTERMEDIATE_VERTEX_BUFFER* AddVertexBuffer(   INTERMEDIATE_MESH* pMesh,UINT StreamID,UINT64 NumVertices,UINT64 SizeBytes,UINT64 StrideBytes,void* pBinaryData );
 		INTERMEDIATE_INDEX_BUFFER* AddIndexBuffer(	 INTERMEDIATE_MESH* pMesh,UINT64 NumIndices,UINT64 SizeBytes,UINT IndexType,void* pBinaryData );
-		INTERMEDIATE_MESH* AddMesh( const char* pszName, D3DXMATRIX TransformMatrix);
+		INTERMEDIATE_MESH* AddMesh( const char* pszName, const XMFLOAT4X4 &TransformMatrix);
 		INTERMEDIATE_MATERIAL* AddMaterial(const char* pszName);
 		INTERMEDIATE_MATERIAL* GetMaterial(const char* pszName);
 		INTERMEDIATE_SUBSET* AddSubset( INTERMEDIATE_MESH* pMesh,char* pszName,UINT MaterialID,D3D11_PRIMITIVE_TOPOLOGY PrimitiveType,UINT64 IndexStart,UINT64 IndexCount,UINT64 VertexStart,UINT64 VertexCount );

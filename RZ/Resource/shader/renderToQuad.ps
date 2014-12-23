@@ -6,29 +6,17 @@ struct PixelInputType
 
 
 Texture2D colorMap : register( t0 ); 
- 
-SamplerState colorSampler : register( s0 ); 
-
-Texture2D normalMap : register( t1 ); 
- 
-SamplerState normalSampler : register( s1 );
-
-Texture2D specularMap : register( t2 ); 
- 
-SamplerState specularSampler : register( s2 );
-
-Texture2D posMap : register( t3 ); 
- 
-SamplerState posSampler : register( s3 );
+Texture2D lightingMap : register( t1 ); 
+SamplerState Sampler : register( s0 ); 
 
 
 float4 RenderToQuadPixelShader(PixelInputType input)  : SV_Target0
 {  
 	float4 result;
 
-	float4 diffuse=colorMap.Sample(colorSampler,input.uv);
-	float4 normal=normalMap.Sample(normalSampler,input.uv);
-	float4 specular=specularMap.Sample(specularSampler,input.uv);
-	float4 pos=posMap.Sample(posSampler,input.uv);
-    return specular;  
+	float4 diffuse=colorMap.Sample(Sampler,input.uv);
+	float4 lighting=lightingMap.Sample(Sampler,input.uv);
+	return diffuse*lighting;
+
+
 }

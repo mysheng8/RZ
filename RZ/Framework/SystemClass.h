@@ -1,10 +1,13 @@
+#pragma once
 #ifndef _SYSTEMCLASS_H_
 #define _SYSTEMCLASS_H_
 
 #define WIN32_LEAN_AND_MEAN
-#include <windows.h>
+
+#include "RZCommon.h"
 #include "InputClass.h"
 #include "GraphicsClass.h"
+
 
 class SystemClass
 {

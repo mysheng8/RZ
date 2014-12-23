@@ -2,6 +2,8 @@
 
 using namespace RZ;
 
+RZShaderManager* RZShaderManager::m_instance = NULL;
+
 RZShaderManager::RZShaderManager()
 {
 }
@@ -11,6 +13,7 @@ RZShaderManager::RZShaderManager(RZShaderManager &other)
 
 RZShaderManager::~RZShaderManager()
 {
+	delete m_instance;
 }
 
 bool RZShaderManager::Initialize(ID3D11Device* pDevice,HWND hwnd)
@@ -37,7 +40,7 @@ bool RZShaderManager::Initialize(ID3D11Device* pDevice,HWND hwnd)
     }  
 
 	RZShader* pShader=new RZShader();
-	if(!pShader->Initialize(pDevice,hwnd,m_matrixBuffer,"E:\\mine\\RZ\\RZ\\Resource\\shader\\basic.vs", "E:\\mine\\RZ\\RZ\\Resource\\shader\\basic.ps"))
+	if(!pShader->Initialize(pDevice,hwnd,m_matrixBuffer,basicVS, basicPS))
 	{
 		return false;
 	}
@@ -61,6 +64,7 @@ bool RZShaderManager::ShotDown()
         m_matrixBuffer->Release();  
         m_matrixBuffer = 0;  
     } 
+	return true;
 }
 
 

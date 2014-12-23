@@ -1,8 +1,8 @@
+#pragma once
 #ifndef _INPUTCLASS_H_  
 #define _INPUTCLASS_H_  
 
-#include <windows.h>
-
+#include"RZCommon.h"
 
 #define SCREENPOSX		100
 #define SCREENPOSY		100

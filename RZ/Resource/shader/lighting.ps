@@ -1,0 +1,75 @@
+cbuffer LightParams  
+{  
+	float3 lightPos;
+	float3 lightDir;
+	float3 lightColor;
+	float3 lightRange;  
+}; 
+
+
+Texture2D colorMap : register( t0 ); 
+Texture2D normalMap : register( t1 ); 
+Texture2D specularMap : register( t2 ); 
+Texture2D posMap : register( t3 ); 
+SamplerState Sampler : register( s0 ); 
+
+void GetGBufferAttributes(in float2 screenPos, out float3 normal, out float3 position, out float3 diffuseAlbedo, out float3 specularAlbedo, out float specularPower)
+{
+	int3 sampleIndices=int3(screenPos.xy,0);
+	normal=normalMap.Load(sampleIndices).xyz;
+	position=posMap.Load(sampleIndices).xyz;
+	diffuseAlbedo=colorMap.Load(sampleIndices).xyz;
+	float4 specular=specularMap.Load(sampleIndices);
+	specularAlbedo=specular.xyz;
+	specularPower=specular.w;
+};
+
+float3 Calclighting(in float3 normal, in float3 pos, in float3 diffuseAlbedo, in float3 specularAlbedo, in float specularPower)
+{
+	float3 L=0;
+	float attenuation= 1.0f;
+	#if SPOTLIGHT||POINTLIGHT
+		L=lightPos-pos;
+		float dist=length(L);
+		attenuation=max(0,1.0f-(dist/lightRange.x));
+		L/=dist;
+	#elif DIRECTIONALLIGHT
+		L=-lightDir;
+	#endif
+	
+	#if SPOTLIGHT
+		float3 L2=lightDir;
+		float rho=dot(-L,L2);
+		attenuation*=saturate((rho-lightRange.z)/(lightRange.y-lightRange.z));
+	#endif
+		float nDotL=saturate(dot(normal,L));
+		float3 diffuse= nDotL*lightColor*diffuseAlbedo;
+
+		float3 V=-pos;
+		float3 H=normalize(L+V);
+		float3 specular=pow(saturate(dot(normal,H)),specularPower)*lightColor*specularAlbedo*nDotL;
+
+		return (diffuse+specular)*attenuation;
+
+};
+
+struct PixelInputType  
+{  
+    float4 position		: SV_POSITION;  
+	float2 uv			: TEXCOORD; 
+}; 
+
+
+float4 LightingPS(PixelInputType input) : SV_TARGET  
+{  
+	float3 normal;
+	float3 position;
+	float3 diffuseAlbedo;
+	float3 specularAlbedo;
+	float specularPower;
+
+	GetGBufferAttributes(input.uv, normal,position,diffuseAlbedo,specularAlbedo,specularPower);
+	float3 lighting=Calclighting(normal,position,diffuseAlbedo,specularAlbedo,specularPower);
+
+	return float4(lighting,1.0f);
+};

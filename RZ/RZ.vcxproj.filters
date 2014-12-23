@@ -40,9 +40,6 @@
     <ClCompile Include="Framework\GraphicsClass.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
-    <ClCompile Include="Framework\D3dClass.cpp">
-      <Filter>Framework</Filter>
-    </ClCompile>
     <ClCompile Include="Entity\RZLight.cpp">
       <Filter>Entity</Filter>
     </ClCompile>
@@ -85,6 +82,12 @@
     <ClCompile Include="Entity\RZPrefab.cpp">
       <Filter>Entity</Filter>
     </ClCompile>
+    <ClCompile Include="Framework\RZRenderMRTs.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\RZD3dRender.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Entity\FbxImporter\RZFbxImporter.h">
@@ -100,9 +103,6 @@
       <Filter>Framework</Filter>
     </ClInclude>
     <ClInclude Include="Framework\GraphicsClass.h">
-      <Filter>Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="Framework\D3dClass.h">
       <Filter>Framework</Filter>
     </ClInclude>
     <ClInclude Include="Entity\RZLight.h">
@@ -147,6 +147,18 @@
     <ClInclude Include="Entity\RZPrefab.h">
       <Filter>Entity</Filter>
     </ClInclude>
+    <ClInclude Include="Framework\RZCommon.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\RZResource.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\RZRenderMRTs.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\RZD3dRender.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\shader\renderToQuad.vs">
@@ -159,6 +171,9 @@
       <Filter>Resource\shader</Filter>
     </None>
     <None Include="Resource\shader\basic.ps">
+      <Filter>Resource\shader</Filter>
+    </None>
+    <None Include="Resource\shader\lighting.ps">
       <Filter>Resource\shader</Filter>
     </None>
   </ItemGroup>

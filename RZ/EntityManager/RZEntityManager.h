@@ -2,12 +2,9 @@
 #ifndef _RZENTITYMANAGER_H_
 #define _RZENTITYMANAGER_H_
 
-#include "d3d11.h"
-#include <stdio.h>
-#include <string>
-#include <map>
-#include "../Entity/RZEntity.h"
 
+#include "../Framework/RZCommon.h"
+#include "../Entity/RZEntity.h"
 #include "RZMaterialManager.h"
 
 namespace RZ
@@ -24,10 +21,11 @@ namespace RZ
 			return m_instance;
 		}
 
-		virtual ~RZEntityManager();
+		~RZEntityManager();
 		bool Initialize(ID3D11Device* pDevice);
 		bool ShotDown();
 		RZEntity* GetEntity(string entityName){	return m_entityMap[entityName];};
+		int GetEntityCount(){return m_entityMap.size();};
 
 
 	private:

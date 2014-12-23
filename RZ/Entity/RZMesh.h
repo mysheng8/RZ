@@ -1,12 +1,10 @@
 #pragma once
 #ifndef RZMESH_H
 #define RZMESH_H
-#include "windows.h"
-#include "d3d11.h"
-#include "d3dx10math.h"
-#include "RZMaterial.h"
-#include <stdio.h>
 
+
+
+#include "RZMaterial.h"
 
 using namespace std;
 
@@ -100,7 +98,7 @@ namespace RZ
 		UINT IndexBuffer;
 		UINT NumSubsets;
 
-		D3DXMATRIX TransformMatrix;
+		XMFLOAT4X4 TransformMatrix;
 		union
 		{
 			UINT64 SubsetOffset;	//Offset to list of subsets (This also forces the union to 64bits)
@@ -130,11 +128,11 @@ namespace RZ
 	class RZVertexType
 	{
 	public:
-		D3DXVECTOR3 position;
-		D3DXVECTOR3 normal;
-		D3DXVECTOR3 tangent;
-		D3DXCOLOR color;
-		D3DXVECTOR2 uv;
+		XMFLOAT3 position;
+		XMFLOAT3 normal;
+		XMFLOAT3 tangent;
+		XMFLOAT4 color;
+		XMFLOAT2 uv;
 	};
 
 	class RZMesh
@@ -163,16 +161,16 @@ namespace RZ
 		bool CreateVertexBuffer( ID3D11Device* pd3dDevice,RZMESH_VERTEX_BUFFER_HEADER* pHeader, void* pVertices);
 		bool CreateIndexBuffer( ID3D11Device* pd3dDevice,RZMESH_INDEX_BUFFER_HEADER* pHeader,void* pIndices);
 
-		bool CreateFromFile(ID3D11Device* device, char* modelFilename);
+		bool CreateFromFile(ID3D11Device* device,const char* modelFilename);
 		bool CreateFromMemory(ID3D11Device* device, char* modelMeshData);
 
 		bool SetMaterial(UINT id, RZMaterial* pMat);
 
 		bool ReleaseModel();
 
-		bool Render(ID3D11DeviceContext* pd3dDeviceContext,D3DXMATRIX, D3DXMATRIX, D3DXMATRIX);
+		bool Render(ID3D11DeviceContext* pd3dDeviceContext,const XMMATRIX &worldMatrix,const XMMATRIX &viewMatrix, const XMMATRIX &projectionMatrix);
 
-		bool RenderMesh(UINT iMesh,ID3D11DeviceContext* pd3dDeviceContext,D3DXMATRIX, D3DXMATRIX, D3DXMATRIX);
+		bool RenderMesh(UINT iMesh,ID3D11DeviceContext* pd3dDeviceContext,const XMMATRIX &worldMatrix,const XMMATRIX &viewMatrix, const XMMATRIX &projectionMatrix);
 
 		
 		//Debug
