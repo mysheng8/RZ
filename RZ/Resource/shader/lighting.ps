@@ -70,6 +70,7 @@ float4 LightingPS(PixelInputType input) : SV_TARGET
 
 	GetGBufferAttributes(input.uv, normal,position,diffuseAlbedo,specularAlbedo,specularPower);
 	float3 lighting=Calclighting(normal,position,diffuseAlbedo,specularAlbedo,specularPower);
-
-	return float4(lighting,1.0f);
+	float4 diffuse=colorMap.Sample(Sampler,input.uv);
+	return float4(1.0f,1.0f,1.0f,1.0f);
+	//return float4(diffuseAlbedo,1.0f);
 };

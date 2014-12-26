@@ -16,7 +16,7 @@ float4 RenderToQuadPixelShader(PixelInputType input)  : SV_Target0
 
 	float4 diffuse=colorMap.Sample(Sampler,input.uv);
 	float4 lighting=lightingMap.Sample(Sampler,input.uv);
-	return diffuse*lighting;
+	return lighting;
 
 
 }

@@ -63,7 +63,7 @@ bool RZRenderMRTs::InitializeShader()
         return false;  
     }  
 	*/
-    result = D3DX11CompileFromFile(lightPS, Shader_Macros, NULL, "LightingPS", "ps_5_0", D3D10_SHADER_DEBUG, 0, NULL, &pixelShaderBuffer, &errorMessage, NULL);  
+    result = D3DX11CompileFromFile(lightPS, Shader_Macros, NULL, "LightingPS", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, &pixelShaderBuffer, &errorMessage, NULL);  
     if(FAILED(result))  
     {   
         if(errorMessage)  
@@ -340,6 +340,19 @@ bool RZRenderMRTs::InitializeQuad()
         return false;
 	}
 
+	cbbd.Usage = D3D11_USAGE_DEFAULT;
+	cbbd.ByteWidth = sizeof(RZLightParams);
+	cbbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	cbbd.CPUAccessFlags = 0;
+	cbbd.MiscFlags = 0;
+
+	hr = m_device->CreateBuffer(&cbbd, NULL, &m_lightingCB);
+	
+    if(FAILED(hr))
+	{
+        return false;
+	}
+
 	return true;
 
 }
@@ -516,7 +529,7 @@ bool RZRenderMRTs::SetupMRTS(int width, int height)
         return false;
 	}
 
-	m_posSRV = NULL;
+	m_lightingSRV = NULL;
     hr =  m_device->CreateShaderResourceView( m_lightingTex, &SRVDesc, &m_lightingSRV );
 	if(FAILED(hr))
 	{
@@ -617,8 +630,8 @@ void RZRenderMRTs::RenderLightingPass(ID3D11DeviceContext* deviceContext,int typ
 	cbt.wvp=WVP;
 	deviceContext->UpdateSubresource( m_matrixCB, 0, NULL, &cbt, 0, 0 );
 	deviceContext->VSSetConstantBuffers( 0, 1, &m_matrixCB );
-
-	deviceContext->UpdateSubresource( m_lightingCB, 0, NULL, &params, 0, 0 );
+	
+	deviceContext->UpdateSubresource( m_lightingCB, 0, NULL, params, 0, 0 );
 	deviceContext->PSSetConstantBuffers( 0, 1, &m_lightingCB );
 
 

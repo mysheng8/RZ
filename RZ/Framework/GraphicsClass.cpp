@@ -15,8 +15,6 @@ GraphicsClass::~GraphicsClass()
 
 bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd ,InputClass *input)  
 {  
-	bool result;
-
 	m_D3D = RZD3dRender::GetInstance();
 	if(!m_D3D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR))  
     {  
@@ -84,7 +82,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd ,Inp
 	
 	for(map<string,vector<RZPrefab*>>::iterator it=m_prefabMap.begin();it!=m_prefabMap.end();++it)
 	{
-		for(int i=0;i<it->second.size();++i)
+		for(unsigned int i=0;i<it->second.size();++i)
 		{
 			cbps[i]=XMLoadFloat4x4(&((it->second)[i]->GetTransform()));
 		}
@@ -96,6 +94,11 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd ,Inp
 bool GraphicsClass::BeginScene()
 {
 	XMFLOAT4X4 trans;
+	float posX=0.0f;
+	float posY=0.0f;
+	float posZ=0.0f;
+	AddPrefab("test",trans);
+	/*
 	for(int i=0;i<MAXINSTANCENUMBER;++i)
 	{
 		float posX=(rand() % 2000) / 50.0f;
@@ -103,7 +106,7 @@ bool GraphicsClass::BeginScene()
 		float posZ=(rand() % 2000) / 50.0f;
 		XMStoreFloat4x4(&trans,XMMatrixTranslation(posX, posY, posZ ));
 		AddPrefab("test",trans);
-	}
+	}*/
 	return true;
 }
 
@@ -117,6 +120,17 @@ void GraphicsClass::AddPrefab(string name, const XMFLOAT4X4 &trans)
 
 void GraphicsClass::Shutdown()  
 {  
+	//map<string,vector<RZPrefab*> >
+	for(map<string,vector<RZPrefab*>>::iterator it=m_prefabMap.begin(); it!=m_prefabMap.end();++it)
+	{
+		for(unsigned int i=0;i<it->second.size();++i)
+		{
+			delete ((it->second)[i]);
+		}
+		it->second.clear();
+	}
+	m_prefabMap.clear();
+
 	if(m_texManager)  
     {  
 		m_texManager->ShotDown();  

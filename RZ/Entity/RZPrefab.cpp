@@ -27,6 +27,7 @@ bool RZPrefab::Initialize(RZEntity* entity, const XMFLOAT4X4 &transform)
 void RZPrefab::ShutDown()
 {
 	m_entity->ShutDown();
+	m_entity=0;
 }
 
 bool RZPrefab::Render(ID3D11DeviceContext* pd3dDeviceContext, const XMMATRIX &worldMatrix,const XMMATRIX &viewMatrix, const XMMATRIX &projectionMatrix)

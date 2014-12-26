@@ -280,6 +280,9 @@ bool RZD3dRender::Initialize(int screenWidth, int screenHeight, bool vsync, HWND
 	{
 		return false;
 	}
+
+	m_lightManager=RZLightManager::GetInstance();
+
     return true; 
 }
 
@@ -343,14 +346,14 @@ void RZD3dRender::EndScene()
 
 	m_device->CreateBlendState(&blendDesc, &m_pCurrentBlendState);
 
-	m_deviceContext->OMGetBlendState(&m_pOldBlendState, 0, 0);
-	m_deviceContext->OMSetBlendState(m_pCurrentBlendState, 0, 0xffffffff);  
+	//m_deviceContext->OMGetBlendState(&m_pOldBlendState, 0, 0);
+	//m_deviceContext->OMSetBlendState(m_pCurrentBlendState, 0, 0xffffffff);  
 
 	
-	m_lManager->Render();
+	m_lightManager->Render();
 
 	m_deviceContext->OMSetRenderTargets(1, &m_renderTargetView, m_depthStencilView);
-	m_deviceContext->OMSetBlendState(m_pOldBlendState, 0, 0xffffffff); 
+	//m_deviceContext->OMSetBlendState(m_pOldBlendState, 0, 0xffffffff); 
 	m_rMRTs->RenderFinalPass(m_deviceContext);
     // Present the back buffer to the screen since rendering is complete.  
     if(m_vsync_enabled)  

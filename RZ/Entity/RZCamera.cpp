@@ -160,8 +160,8 @@ void RZSimpleCamera::UpdateTransform()
 
 			lookAt=XMVectorSet(0.0f,0.0f,m_focusDistance,0.0f);
 
-			m_rotationY+=delta.x*m_camRotSpeed;
-			m_rotationX+=delta.y*m_camRotSpeed;
+			m_rotationY+=delta.y*m_camRotSpeed;
+			m_rotationX+=delta.x*m_camRotSpeed;
 
 			pitch = m_rotationX * 0.0174532925f;  
 			yaw   = m_rotationY * 0.0174532925f;  

@@ -62,7 +62,7 @@ bool RZLightManager::Initialize(ID3D11Device* pDevice,ID3D11DeviceContext* pd3dD
 
 	*/
 
-
+	
 	XMFLOAT3 dir;
 	dir.x=0;
 	dir.y=-1;
@@ -73,7 +73,7 @@ bool RZLightManager::Initialize(ID3D11Device* pDevice,ID3D11DeviceContext* pd3dD
 	color.z=1;
 	AddDirectionLight(true,dir,color);
 
-
+	
 
 	return true;
 }
@@ -178,5 +178,15 @@ void RZLightManager::BeginScene()
 
 void RZLightManager::ShotDown()
 {
+	for(vector<RZLight*>::iterator it=m_staticList.begin();it!=m_staticList.end();++it)
+	{
+		delete (*it);
+	}
+	m_staticList.clear();
 
+	for(vector<RZLight*>::iterator it=m_dynamicList.begin();it!=m_dynamicList.end();++it)
+	{
+		delete (*it);
+	}
+	m_dynamicList.clear();
 }

@@ -4,6 +4,8 @@ SystemClass::SystemClass()
 {
 	m_Input=0;
 	m_Graphics=0;
+	m_hwnd=NULL;
+	m_hinstance=NULL;
 }
 
 SystemClass::SystemClass(const SystemClass& other)
@@ -23,7 +25,7 @@ bool SystemClass::Initialize()
 	screenHeight=0;
 
 	InitializeWindows(screenWidth,screenHeight);
-
+	
 	m_Input = new InputClass;
 	if(!m_Input)
 	{

@@ -35,6 +35,7 @@ RZLight::RZLight(const RZLight& other)
   
 RZLight::~RZLight()  
 {  
+	delete m_params;
 }
 
 void RZLight::SetLightDirection(float x,float y, float z)  
