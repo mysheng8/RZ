@@ -40,7 +40,10 @@ namespace RZ
 	private:  
 		int m_lightType;	//1 - point light; 2 - spot light; 3 - direction light;
 		bool m_isStatic;
-		RZLightParams*			m_params;
+		XMFLOAT3				lightPos;
+		XMFLOAT3				lightDir;
+		XMFLOAT3				lightColor;
+		XMFLOAT3				lightRange;;
 		RZRenderMRTs*			m_rMRTs;		
 		
 	};

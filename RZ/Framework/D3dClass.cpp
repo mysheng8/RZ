@@ -1,11 +1,7 @@
-#include "RZD3dRender.h"
+#include "D3dClass.h"
 
-using namespace RZ;
-
-RZD3dRender* RZD3dRender::m_instance = NULL;
-
-RZD3dRender::RZD3dRender()  
-{  /*
+D3DClass::D3DClass()  
+{  
     m_swapChain = 0;  
     m_device = 0;  
     m_deviceContext = 0;  
@@ -14,20 +10,17 @@ RZD3dRender::RZD3dRender()
     m_depthStencilState = 0;  
     m_depthStencilView = 0;  
     m_rasterState = 0;  
-	m_rMRTs = 0
-	*/
 }
 
-RZD3dRender::RZD3dRender(const RZD3dRender& other)  
+D3DClass::D3DClass(const D3DClass& other)  
 {  
 } 
   
-RZD3dRender::~RZD3dRender()  
+D3DClass::~D3DClass()  
 {  
-	delete m_instance;
 }
 
-bool RZD3dRender::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, bool fullscreen,float screenDepth, float screenNear)
+bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, bool fullscreen,float screenDepth, float screenNear)
 {
 	HRESULT result;
 	IDXGIFactory* factory;
@@ -240,7 +233,7 @@ bool RZD3dRender::Initialize(int screenWidth, int screenHeight, bool vsync, HWND
         return false;  
     }
 
-	//m_deviceContext->OMSetRenderTargets(1, &m_renderTargetView, m_depthStencilView);
+	m_deviceContext->OMSetRenderTargets(1, &m_renderTargetView, m_depthStencilView);
 
 	rasterDesc.AntialiasedLineEnable = false;  
     rasterDesc.CullMode = D3D11_CULL_BACK;  
@@ -267,48 +260,80 @@ bool RZD3dRender::Initialize(int screenWidth, int screenHeight, bool vsync, HWND
     viewport.TopLeftX = 0.0f;  
     viewport.TopLeftY = 0.0f;
 	m_deviceContext->RSSetViewports(1, &viewport);
-	fieldOfView = (float)XM_PI / 4.0f;  
+	fieldOfView = (float)D3DX_PI / 4.0f;  
     screenAspect = (float)screenWidth / (float)screenHeight;
-
-	XMStoreFloat4x4(&m_projectionMatrix,XMMatrixPerspectiveFovLH(fieldOfView, screenAspect, screenNear, screenDepth));
-	XMStoreFloat4x4(&m_worldMatrix,XMMatrixIdentity());
-	XMStoreFloat4x4(&m_orthoMatrix,XMMatrixOrthographicLH((float)screenWidth, (float)screenHeight, screenNear, screenDepth));  
+	D3DXMatrixPerspectiveFovLH(&m_projectionMatrix, fieldOfView, screenAspect, screenNear, screenDepth);
+	D3DXMatrixIdentity(&m_worldMatrix);
+	D3DXMatrixOrthoLH(&m_orthoMatrix, (float)screenWidth, (float)screenHeight, screenNear, screenDepth);  
   
-
-	m_rMRTs=RZRenderMRTs::GetInstance();
-	if(!m_rMRTs->Initialize(m_device,hwnd,screenWidth,screenHeight))
-	{
-		return false;
-	}
-
-	m_lightManager=RZLightManager::GetInstance();
-
     return true; 
 }
 
-
-
-void RZD3dRender::BeginScene(float red, float green, float blue, float alpha)  
+void D3DClass::Shutdown()  
 {  
-	//set renderTarget to MRT
-	ID3D11RenderTargetView* renderTargetViewArray[4] = 
-	{
-		m_rMRTs->GetRenderTargetView(1),
-		m_rMRTs->GetRenderTargetView(2),
-		m_rMRTs->GetRenderTargetView(3),
-		m_rMRTs->GetRenderTargetView(4)
-	};
+    // Before shutting down set to windowed mode or when you release the swap chain it will throw an exception.  
+    if(m_swapChain)  
+    {  
+        m_swapChain->SetFullscreenState(false, NULL);  
+    }  
+  
+    if(m_rasterState)  
+    {  
+        m_rasterState->Release();  
+        m_rasterState = 0;  
+    }  
+  
+    if(m_depthStencilView)  
+    {  
+        m_depthStencilView->Release();  
+        m_depthStencilView = 0;  
+    }  
+  
+    if(m_depthStencilState)  
+    {  
+        m_depthStencilState->Release();  
+        m_depthStencilState = 0;  
+    }  
+  
+    if(m_depthStencilBuffer)  
+    {  
+        m_depthStencilBuffer->Release();  
+        m_depthStencilBuffer = 0;  
+    }  
+  
+    if(m_renderTargetView)  
+    {  
+        m_renderTargetView->Release();  
+        m_renderTargetView = 0;  
+    }  
+  
+    if(m_deviceContext)  
+    {  
+        m_deviceContext->Release();  
+        m_deviceContext = 0;  
+    }  
+  
+    if(m_device)  
+    {  
+        m_device->Release();  
+        m_device = 0;  
+    }  
+  
+    if(m_swapChain)  
+    {  
+        m_swapChain->Release();  
+        m_swapChain = 0;  
+    }  
+  
+    return;  
+}
 
-
-	m_deviceContext->OMSetRenderTargets(4, renderTargetViewArray, m_depthStencilView);
-
-	m_rMRTs->ClearMRTs(m_deviceContext);
-
-
+void D3DClass::BeginScene(float red, float green, float blue, float alpha)  
+{  
     float color[4];  
   
   
-    // Setup the background color  
+    // Setup the color to clear the buffer to.  
     color[0] = red;  
     color[1] = green;  
     color[2] = blue;  
@@ -321,40 +346,8 @@ void RZD3dRender::BeginScene(float red, float green, float blue, float alpha)
     return;  
 }
 
-void RZD3dRender::EndScene()  
-{ 
-	
-	ID3D11RenderTargetView*	lightRTV;
-	ID3D11BlendState* m_pCurrentBlendState;
-	ID3D11BlendState* m_pOldBlendState;
-
-	lightRTV=(m_rMRTs->GetRenderTargetView(0));
-	m_deviceContext->OMSetRenderTargets(1, &m_renderTargetView, m_depthStencilView);
-
-	D3D11_BLEND_DESC blendDesc;
-	ZeroMemory( &blendDesc, sizeof(blendDesc) );
-    blendDesc.AlphaToCoverageEnable = false;  
-    blendDesc.IndependentBlendEnable = false;  
-    blendDesc.RenderTarget[0].BlendEnable = TRUE;  
-    blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;  
-    blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;  
-    blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;  
-    blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO;  
-    blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;  
-    blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;  
-    blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL; 
-
-	m_device->CreateBlendState(&blendDesc, &m_pCurrentBlendState);
-
-	//m_deviceContext->OMGetBlendState(&m_pOldBlendState, 0, 0);
-	//m_deviceContext->OMSetBlendState(m_pCurrentBlendState, 0, 0xffffffff);  
-
-	
-	m_lightManager->Render();
-
-	m_deviceContext->OMSetRenderTargets(1, &m_renderTargetView, m_depthStencilView);
-	//m_deviceContext->OMSetBlendState(m_pOldBlendState, 0, 0xffffffff); 
-	//m_rMRTs->RenderFinalPass(m_deviceContext);
+void D3DClass::EndScene()  
+{  
     // Present the back buffer to the screen since rendering is complete.  
     if(m_vsync_enabled)  
     {  
@@ -368,54 +361,37 @@ void RZD3dRender::EndScene()
     return;  
 }
 
-
-
-ID3D11Device* RZD3dRender::GetDevice()  
+ID3D11Device* D3DClass::GetDevice()  
 {  
     return m_device;  
 }
 
-ID3D11DeviceContext* RZD3dRender::GetDeviceContext()  
+ID3D11DeviceContext* D3DClass::GetDeviceContext()  
 {  
     return m_deviceContext;  
 }
 
-void RZD3dRender::GetProjectionMatrix(XMMATRIX& projectionMatrix)  
+void D3DClass::GetProjectionMatrix(D3DXMATRIX& projectionMatrix)  
 {  
-    projectionMatrix =XMLoadFloat4x4(&m_projectionMatrix);  
+    projectionMatrix = m_projectionMatrix;  
     return;  
 }
 
-void RZD3dRender::GetWorldMatrix(XMMATRIX& worldMatrix)  
+void D3DClass::GetWorldMatrix(D3DXMATRIX& worldMatrix)  
 {  
-    worldMatrix = XMLoadFloat4x4(&m_worldMatrix);  
+    worldMatrix = m_worldMatrix;  
     return;  
 }
 
-void RZD3dRender::GetOrthoMatrix(XMMATRIX& orthoMatrix)  
+void D3DClass::GetOrthoMatrix(D3DXMATRIX& orthoMatrix)  
 {  
-    orthoMatrix = XMLoadFloat4x4(&m_orthoMatrix);  
+    orthoMatrix = m_orthoMatrix;  
     return;  
 }
 
-void RZD3dRender::GetVideoCardInfo(char* cardName, int& memory)  
+void D3DClass::GetVideoCardInfo(char* cardName, int& memory)  
 {  
     strcpy_s(cardName, 128, m_videoCardDescription);  
     memory = m_videoCardMemory;  
-    return;  
-}
-
-void RZD3dRender::Shutdown()  
-{  
-	RZRELEASE(m_swapChain);
-	RZRELEASE(m_rasterState);
-	RZRELEASE(m_depthStencilView);
-	RZRELEASE(m_depthStencilState);
-	RZRELEASE(m_depthStencilBuffer);
-	RZRELEASE(m_renderTargetView);
-	RZRELEASE(m_deviceContext);
-	RZRELEASE(m_device);
-	RZRELEASE(m_swapChain);
-  
     return;  
 }

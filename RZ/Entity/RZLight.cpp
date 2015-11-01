@@ -12,12 +12,11 @@ void RZLight::Initialize(int lightType, bool isStatic)
 {  
 	m_isStatic = isStatic;
 	m_lightType = lightType;
-	m_params = new RZLightParams();
 
-	m_params->lightDir=XMFLOAT3(0,1.0f,-1.0f);
-	m_params->lightPos=XMFLOAT3(0,1.0f,-1.0f);
-	m_params->lightColor=XMFLOAT3(0,1.0f,-1.0f);
-	m_params->lightRange=XMFLOAT3(0,1.0f,-1.0f);
+	lightDir=XMFLOAT3(0,1.0f,-1.0f);
+	lightPos=XMFLOAT3(0,1.0f,0.0f);
+	lightColor=XMFLOAT3(1.0f,1.0f,1.0f);
+	lightRange=XMFLOAT3(0,1.0f,0.0f);
 
 	m_rMRTs=RZRenderMRTs::GetInstance();
 
@@ -25,7 +24,7 @@ void RZLight::Initialize(int lightType, bool isStatic)
 
 void RZLight::Render(ID3D11DeviceContext* pDeviceContext)
 {
-	m_rMRTs->RenderLightingPass(pDeviceContext,m_lightType,m_params);
+	m_rMRTs->RenderLightingPass(pDeviceContext,m_lightType,lightDir,lightPos,lightColor,lightRange);
 }
 
 RZLight::RZLight(const RZLight& other)  
@@ -35,68 +34,74 @@ RZLight::RZLight(const RZLight& other)
   
 RZLight::~RZLight()  
 {  
-	delete m_params;
+
 }
 
 void RZLight::SetLightDirection(float x,float y, float z)  
 {  
-	m_params->lightDir=XMFLOAT3(x,y,z);
+	lightDir.x=x;
+	lightDir.y=y;
+	lightDir.z=z;
     return;  
 }
 
 void RZLight::GetLightDirection(XMFLOAT3& outDir)  
 {  
-	outDir=m_params->lightDir;
+	outDir=lightDir;
     return;  
 }
 
 void RZLight::SetLightPosition(float x,float y, float z)  
 {  
-	m_params->lightPos=XMFLOAT3(x,y,z);
+	lightPos.x=x;
+	lightPos.y=y;
+	lightPos.z=z;
     return;  
 }
 
 void RZLight::GetLightPosition(XMFLOAT3& outPos)  
 {  
-	outPos=m_params->lightPos;
+	outPos=lightPos;
     return;  
 }
 
 void RZLight::SetLightColor(float x,float y, float z)  
 {  
-	m_params->lightDir=XMFLOAT3(x,y,z);
+	lightDir.x=x;
+	lightDir.y=y;
+	lightDir.z=z;
     return;  
 }
 
 void RZLight::GetLightColor(XMFLOAT3& outColor)  
 {  
-	outColor=m_params->lightColor;
+	outColor=lightColor;
     return;  
 }
 
 void RZLight::SetLightRange(float x)  
 {  
-	m_params->lightRange.x=x;
+	lightRange.x=x;
     return;  
 }
 
 void RZLight::GetLightRange(float& x)  
 {  
-	x=m_params->lightRange.x;
+	x=lightRange.x;
     return;  
 }
 
 void RZLight::SetSpotLightAngles(float y,float z)  
 {  
-	m_params->lightRange.y=y;
-	m_params->lightRange.z=z;
+	lightRange.y=y;
+	lightRange.z=z;
     return;  
 }
 
 void RZLight::GetSpotLightAngles(float& y, float& z)  
 {  
-	y=m_params->lightRange.y;
-	z=m_params->lightRange.z;
+	y=lightRange.y;
+	z=lightRange.z;
     return;  
 }
 

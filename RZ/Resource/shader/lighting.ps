@@ -1,9 +1,9 @@
-cbuffer LightParams  
+cbuffer LightParams  :register( b1 )
 {  
-	float3 lightPos;
-	float3 lightDir;
-	float3 lightColor;
-	float3 lightRange;  
+	float4 lightPos;
+	float4 lightDir;
+	float4 lightColor;
+	float4 lightRange;  
 }; 
 
 
@@ -29,27 +29,28 @@ float3 Calclighting(in float3 normal, in float3 pos, in float3 diffuseAlbedo, in
 	float3 L=0;
 	float attenuation= 1.0f;
 	#if SPOTLIGHT||POINTLIGHT
-		L=lightPos-pos;
+		L=lightPos.xyz-pos;
 		float dist=length(L);
 		attenuation=max(0,1.0f-(dist/lightRange.x));
 		L/=dist;
 	#elif DIRECTIONALLIGHT
-		L=-lightDir;
+		L=-lightDir.xyz;
 	#endif
 	
 	#if SPOTLIGHT
-		float3 L2=lightDir;
+		float3 L2=lightDir.xyz;
 		float rho=dot(-L,L2);
 		attenuation*=saturate((rho-lightRange.z)/(lightRange.y-lightRange.z));
 	#endif
-		float nDotL=saturate(dot(normal,L));
+		L=-lightDir.xyz;
+		float nDotL=saturate(dot(normal,lightDir.xyz));
 		float3 diffuse= nDotL*lightColor*diffuseAlbedo;
 
 		float3 V=-pos;
 		float3 H=normalize(L+V);
 		float3 specular=pow(saturate(dot(normal,H)),specularPower)*lightColor*specularAlbedo*nDotL;
 
-		return (diffuse+specular)*attenuation;
+		return lightDir.xyz;
 
 };
 
@@ -68,9 +69,7 @@ float4 LightingPS(PixelInputType input) : SV_TARGET
 	float3 specularAlbedo;
 	float specularPower;
 
-	GetGBufferAttributes(input.uv, normal,position,diffuseAlbedo,specularAlbedo,specularPower);
+	GetGBufferAttributes(input.position.xy, normal,position,diffuseAlbedo,specularAlbedo,specularPower);
 	float3 lighting=Calclighting(normal,position,diffuseAlbedo,specularAlbedo,specularPower);
-	float4 diffuse=colorMap.Sample(Sampler,input.uv);
-	return float4(1.0f,1.0f,1.0f,1.0f);
-	//return float4(diffuseAlbedo,1.0f);
+	return float4(lighting,1.0f);
 };

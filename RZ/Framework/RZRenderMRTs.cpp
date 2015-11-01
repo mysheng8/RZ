@@ -340,11 +340,8 @@ bool RZRenderMRTs::InitializeQuad()
         return false;
 	}
 
-	cbbd.Usage = D3D11_USAGE_DEFAULT;
+
 	cbbd.ByteWidth = sizeof(RZLightParams);
-	cbbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	cbbd.CPUAccessFlags = 0;
-	cbbd.MiscFlags = 0;
 
 	hr = m_device->CreateBuffer(&cbbd, NULL, &m_lightingCB);
 	
@@ -580,7 +577,7 @@ bool RZRenderMRTs::SetupMRTS(int width, int height)
 
 
 
-void RZRenderMRTs::RenderLightingPass(ID3D11DeviceContext* deviceContext,int type,RZLightParams* params)
+void RZRenderMRTs::RenderLightingPass(ID3D11DeviceContext* deviceContext,int type,const XMFLOAT3& lightPos, const XMFLOAT3& lightDir,const XMFLOAT3& lightColor,const XMFLOAT3& lightRange)
 {
 	//render quad
 	deviceContext->VSSetShader(m_finalVS, 0, 0);
@@ -631,8 +628,13 @@ void RZRenderMRTs::RenderLightingPass(ID3D11DeviceContext* deviceContext,int typ
 	deviceContext->UpdateSubresource( m_matrixCB, 0, NULL, &cbt, 0, 0 );
 	deviceContext->VSSetConstantBuffers( 0, 1, &m_matrixCB );
 	
-	deviceContext->UpdateSubresource( m_lightingCB, 0, NULL, params, 0, 0 );
-	deviceContext->PSSetConstantBuffers( 0, 1, &m_lightingCB );
+	RZLightParams cbl;
+	cbl.lightColor=XMLoadFloat3(&lightColor);
+	cbl.lightDir=XMLoadFloat3(&lightDir);
+	cbl.lightPos=XMLoadFloat3(&lightPos);
+	cbl.lightRange=XMLoadFloat3(&lightRange);
+	deviceContext->UpdateSubresource( m_lightingCB, 0, NULL, &cbl, 0, 0 );
+	deviceContext->PSSetConstantBuffers( 1, 1, &m_lightingCB );
 
 
 	deviceContext->PSSetShaderResources( 0, 1, &m_colorSRV );	// Draw the color map to the square
@@ -678,7 +680,7 @@ void RZRenderMRTs::RenderFinalPass(ID3D11DeviceContext* deviceContext)
 
 	//Draw the second cube
 	deviceContext->DrawIndexed( 6, 0, 0 );
-
+	
 }
 
 void RZRenderMRTs::ClearMRTs(ID3D11DeviceContext* deviceContext)

@@ -13,10 +13,10 @@ namespace RZ
 {
 	struct RZLightParams
 	{
-		XMFLOAT3 lightPos;
-		XMFLOAT3 lightDir;
-		XMFLOAT3 lightColor;
-		XMFLOAT3 lightRange;	//x - point light range; yz - spot light Angles 
+		XMVECTOR lightPos;
+		XMVECTOR lightDir;
+		XMVECTOR lightColor;
+		XMVECTOR lightRange;	//x - point light range; yz - spot light Angles 
 	
 	};
 
@@ -48,7 +48,7 @@ namespace RZ
 		void ShutDown();
 		void ClearMRTs(ID3D11DeviceContext* deviceContext);
 		void RenderFinalPass(ID3D11DeviceContext* deviceContext);
-		void RenderLightingPass(ID3D11DeviceContext* deviceContext,int type,RZLightParams* params);	//1--point,2--spot,3--directional
+		void RenderLightingPass(ID3D11DeviceContext* deviceContext,int type,const XMFLOAT3& lightPos, const XMFLOAT3& lightDir,const XMFLOAT3& lightColor,const XMFLOAT3& lightRange);	//1--point,2--spot,3--directional
 
 		ID3D11RenderTargetView* GetRenderTargetView(int type);					//0--Lighting,1--color,2--normal,3--specular,4--pos
 

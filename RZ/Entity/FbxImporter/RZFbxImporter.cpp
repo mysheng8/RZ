@@ -457,7 +457,14 @@ bool RZFbxImporter::ConvertToRZMesh(FbxNode* pNode,int &currentVertexPos, int &c
 
 	INTERMEDIATE_MESH* pMesh = m_pRZIntermediateMesh->AddMesh(pNode->GetName(),pTransformMatrix);
 
-	
+	//generate Tangent
+	if(!desc->hasTangent)
+    {
+        if(!pOrgMesh->GenerateTangentsData(0,true))
+		{
+			return false;
+		}
+    }
 
 
 	FbxGeometryConverter converter(m_sdkManager);
@@ -468,11 +475,7 @@ bool RZFbxImporter::ConvertToRZMesh(FbxNode* pNode,int &currentVertexPos, int &c
         pOrgMesh=(FbxMesh*)converter.Triangulate(pOrgMesh,true);
     }
 
-	//generate Tangent
-	if(!desc->hasTangent)
-    {
-        pOrgMesh->GenerateTangentsData(0);
-    }
+
 	
 	//Get Material List
 	for(int i=0;i!=desc->matCount;++i)

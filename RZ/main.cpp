@@ -8,13 +8,13 @@ using namespace RZ;
 int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,PSTR pScmdlne,int iCmdshc)
 {
 	char lFilename[]="E:\\mine\\RZ\\RZ\\test2.fbx";
-	//char szFileNameASCII[]="E:\\mine\\RZ\\RZ\\Resource\\model\\test.rza";
+	char szFileNameASCII[]="E:\\mine\\RZ\\RZ\\Resource\\model\\test.rza";
 	RZFbxImporter *importer=new RZFbxImporter();
 	importer->init();
 	importer->LoadMeshFromFile(lFilename);
 	RZIntermediateMesh* pRZIntermediateMesh=importer->GetMesh();
 	pRZIntermediateMesh->SaveAsRZMesh(model);
-	//pRZIntermediateMesh->SaveAsRZMeshASCII(szFileNameASCII);
+	pRZIntermediateMesh->SaveAsRZMeshASCII(szFileNameASCII);
 	SystemClass* System;
 	bool result; 
 

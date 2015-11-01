@@ -64,9 +64,9 @@ bool RZLightManager::Initialize(ID3D11Device* pDevice,ID3D11DeviceContext* pd3dD
 
 	
 	XMFLOAT3 dir;
-	dir.x=0;
+	dir.x=2;
 	dir.y=-1;
-	dir.z=-1;
+	dir.z=0;
 	XMFLOAT3 color;
 	color.x=1;
 	color.y=1;

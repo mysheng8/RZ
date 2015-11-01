@@ -139,7 +139,7 @@ void RZMesh::DebugBuffer(ID3D11Device* device,ID3D11DeviceContext* pd3dDeviceCon
 	pIB=(DWORD*)mappedIBResource.pData;
 	//pVB=(RZVertexType*)m_pVertices;
 	//pIB=(DWORD*)m_pIndices;
-	char logFile[]="E:\\mine\\RZ\\RZ\\log.txt";
+	char logFile[]="E:\\main\\RZ\\RZ\\log.txt";
 	ofstream fout;
 
 	// Open the file
