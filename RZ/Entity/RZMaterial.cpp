@@ -49,11 +49,6 @@ void RZMaterial::ShutDown()
 
 	delete(m_params);
 
-	if(m_matBuffer)
-	{
-		m_matBuffer->Release();
-		m_matBuffer=0;
-	}
 }
 
 

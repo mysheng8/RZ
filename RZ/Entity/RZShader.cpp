@@ -46,7 +46,7 @@ bool RZShader::Initialize(ID3D11Device* device, HWND hwnd, ID3D11Buffer* matrixB
     ID3D10Blob* pixelShaderBuffer;  
 	D3D11_INPUT_ELEMENT_DESC polygonLayout[5];
     unsigned int numElements;  
-    D3D11_BUFFER_DESC matrixBufferDesc;  
+    //D3D11_BUFFER_DESC matrixBufferDesc;  
 	m_matrixBuffer=matrixBuffer;
   
     // Initialize the pointers this function will use to null.  

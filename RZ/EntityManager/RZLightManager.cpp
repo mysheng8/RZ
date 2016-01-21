@@ -89,7 +89,10 @@ bool RZLightManager::AddDirectionLight(bool isStatic, XMFLOAT3 dir,XMFLOAT3 colo
 	{
 		m_staticList.push_back(dl);
 	}
-	m_dynamicList.push_back(dl);
+	else
+	{
+		m_dynamicList.push_back(dl);
+	}
 
 	return true;
 }
@@ -105,7 +108,10 @@ bool RZLightManager::AddPointLight(bool isStatic, XMFLOAT3 pos,XMFLOAT3 color,fl
 	{
 		m_staticList.push_back(pl);
 	}
-	m_dynamicList.push_back(pl);
+	else
+	{
+		m_dynamicList.push_back(pl);
+	}
 
 	return true;
 }
@@ -123,8 +129,10 @@ bool RZLightManager::AddSpotLight(bool isStatic, XMFLOAT3 pos, XMFLOAT3 dir,XMFL
 	{
 		m_staticList.push_back(sl);
 	}
-	m_dynamicList.push_back(sl);
-
+	else
+	{
+		m_dynamicList.push_back(sl);
+	}
 	return true;
 }
 

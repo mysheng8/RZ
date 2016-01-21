@@ -1,8 +1,9 @@
 #include "GraphicsClass.h"
 
+GraphicsClass* GraphicsClass::m_instance = NULL;
+
 GraphicsClass::GraphicsClass()  
 {
-	m_D3D = 0;
 }  
   
 GraphicsClass::GraphicsClass(const GraphicsClass& other)  
@@ -58,7 +59,44 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd ,Inp
 	if(!m_lightManager->Initialize(m_D3D->GetDevice(),m_D3D->GetDeviceContext()))
 	{
 		return false;
+	};
+
+
+	testLine = new RZLine();
+	if (!testLine->Initialize(m_D3D->GetDevice(), hwnd))
+	{
+		return false;
 	}
+
+
+
+	const int num = 256;
+	vector<RZLineKnot> line;
+
+	float r, a, y, z;
+	float rc = 4;
+	for (UINT i = 0; i != num; ++i)
+	{
+		
+		r = rand() / 32767.0; //generate random num in (0,1)
+		a = 2 * PI * (rand() / 32767.0);
+		y = rc*sqrt(r)*cos(a);
+		z = rc*sqrt(r)*sin(a);
+
+		line.push_back(RZLineKnot(0, -1 + y, -2 + z, 1, 1, 0, 0, 0));
+		line.push_back(RZLineKnot(-1, 0 + y, -2 + z, 1, 1, 1, 0, 0));
+		line.push_back(RZLineKnot(-1, 1 + y, -2 + z, 0, 1, 1, 0, 0));
+		line.push_back(RZLineKnot(1, 1 + y, -2 + z, 0, 0, 1, 0, 0));
+		line.push_back(RZLineKnot(2, 2 + y, -2 + z, 0, 0, 1, 0, 0));
+		line.push_back(RZLineKnot(3, 4 + y, -2 + z, 0, 1, 1, 0, 0));
+		line.push_back(RZLineKnot(5, 4 + y, -2 + z, 1, 1, 1, 0, 0));
+		line.push_back(RZLineKnot(7, 4 + y, -2 + z, 1, 0, 1, 0, 0));
+	}
+
+
+
+
+	testLine->CreateLine(num*8, line.data());
 
 
 	BeginScene();
@@ -88,6 +126,14 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd ,Inp
 		}
 	}
 	m_D3D->GetDeviceContext()->UpdateSubresource( cbPerInstanceBuffer, 0, NULL, &cbps, 0, 0 );
+
+
+
+
+
+
+
+
     return true;  
 }
 
@@ -174,6 +220,13 @@ void GraphicsClass::Shutdown()
         delete m_D3D;  
         m_D3D = 0;  
     }
+
+	if (testLine)
+	{
+		testLine->Release();
+		delete testLine;
+		testLine = 0;
+	}
     return;  
 }
 
@@ -196,7 +249,7 @@ bool GraphicsClass::Render()
 	XMMATRIX viewMatrix, projectionMatrix, worldMatrix;
 
       // Clear the buffers to begin the scene.  
-    m_D3D->BeginScene(0.1f, 0.1f, 0.1f, 0.0f);  
+    m_D3D->BeginScene(0.5f, 0.5f, 0.5f, 0.0f);  
 
 	m_camera->Render();  
   
@@ -210,6 +263,9 @@ bool GraphicsClass::Render()
 		it->second[0]->Render(m_D3D->GetDeviceContext(),worldMatrix, viewMatrix, projectionMatrix);
 	
 	}
+	
+	//Render Test Line
+	testLine->RenderTessellatedLineCluster(m_D3D->GetDeviceContext(), worldMatrix, viewMatrix, projectionMatrix);
 
     // Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
     //result = m_Entity->Render(m_D3D->GetDeviceContext(),worldMatrix, viewMatrix, projectionMatrix);

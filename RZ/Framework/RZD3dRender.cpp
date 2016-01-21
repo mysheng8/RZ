@@ -24,7 +24,7 @@ RZD3dRender::RZD3dRender(const RZD3dRender& other)
   
 RZD3dRender::~RZD3dRender()  
 {  
-	delete m_instance;
+	
 }
 
 bool RZD3dRender::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, bool fullscreen,float screenDepth, float screenNear)
@@ -243,7 +243,7 @@ bool RZD3dRender::Initialize(int screenWidth, int screenHeight, bool vsync, HWND
 	//m_deviceContext->OMSetRenderTargets(1, &m_renderTargetView, m_depthStencilView);
 
 	rasterDesc.AntialiasedLineEnable = false;  
-    rasterDesc.CullMode = D3D11_CULL_BACK;  
+	rasterDesc.CullMode = D3D11_CULL_NONE;
     rasterDesc.DepthBias = 0;  
     rasterDesc.DepthBiasClamp = 0.0f;  
     rasterDesc.DepthClipEnable = true;  
@@ -291,7 +291,7 @@ bool RZD3dRender::Initialize(int screenWidth, int screenHeight, bool vsync, HWND
 void RZD3dRender::BeginScene(float red, float green, float blue, float alpha)  
 {  
 	//set renderTarget to MRT
-	ID3D11RenderTargetView* renderTargetViewArray[4] = 
+	ID3D11RenderTargetView* renderTargetViewArray[4]
 	{
 		m_rMRTs->GetRenderTargetView(1),
 		m_rMRTs->GetRenderTargetView(2),
@@ -313,9 +313,20 @@ void RZD3dRender::BeginScene(float red, float green, float blue, float alpha)
     color[1] = green;  
     color[2] = blue;  
     color[3] = alpha;  
-  
-    m_deviceContext->ClearRenderTargetView(m_renderTargetView, color);  
-      
+	m_deviceContext->ClearRenderTargetView(m_renderTargetView, color);
+
+	color[0] = 0;
+	color[1] = 0;
+	color[2] = 0;
+	color[3] = 0;
+	m_deviceContext->ClearRenderTargetView(m_rMRTs->GetRenderTargetView(0), color);
+	m_deviceContext->ClearRenderTargetView(m_rMRTs->GetRenderTargetView(1), color);
+	m_deviceContext->ClearRenderTargetView(m_rMRTs->GetRenderTargetView(2), color);
+	m_deviceContext->ClearRenderTargetView(m_rMRTs->GetRenderTargetView(3), color);
+	m_deviceContext->ClearRenderTargetView(m_rMRTs->GetRenderTargetView(4), color);
+
+	
+    
     m_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);  
   
     return;  
@@ -329,7 +340,7 @@ void RZD3dRender::EndScene()
 	ID3D11BlendState* m_pOldBlendState;
 
 	lightRTV=(m_rMRTs->GetRenderTargetView(0));
-	m_deviceContext->OMSetRenderTargets(1, &m_renderTargetView, m_depthStencilView);
+	m_deviceContext->OMSetRenderTargets(1, &lightRTV, 0);
 
 	D3D11_BLEND_DESC blendDesc;
 	ZeroMemory( &blendDesc, sizeof(blendDesc) );
@@ -348,13 +359,13 @@ void RZD3dRender::EndScene()
 
 	//m_deviceContext->OMGetBlendState(&m_pOldBlendState, 0, 0);
 	//m_deviceContext->OMSetBlendState(m_pCurrentBlendState, 0, 0xffffffff);  
-
+	
 	
 	m_lightManager->Render();
-
-	m_deviceContext->OMSetRenderTargets(1, &m_renderTargetView, m_depthStencilView);
+	m_deviceContext->OMSetRenderTargets(1, &m_renderTargetView, 0);
 	//m_deviceContext->OMSetBlendState(m_pOldBlendState, 0, 0xffffffff); 
-	//m_rMRTs->RenderFinalPass(m_deviceContext);
+	m_rMRTs->RenderFinalPass(m_deviceContext);
+
     // Present the back buffer to the screen since rendering is complete.  
     if(m_vsync_enabled)  
     {  
@@ -410,12 +421,14 @@ void RZD3dRender::Shutdown()
 	RZRELEASE(m_swapChain);
 	RZRELEASE(m_rasterState);
 	RZRELEASE(m_depthStencilView);
-	RZRELEASE(m_depthStencilState);
 	RZRELEASE(m_depthStencilBuffer);
 	RZRELEASE(m_renderTargetView);
-	RZRELEASE(m_deviceContext);
 	RZRELEASE(m_device);
 	RZRELEASE(m_swapChain);
-  
+
+	/*system auto release this two object
+	RZRELEASE(m_depthStencilState);
+	RZRELEASE(m_deviceContext);
+	*/
     return;  
 }

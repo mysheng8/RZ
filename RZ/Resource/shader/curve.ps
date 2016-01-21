@@ -1,0 +1,27 @@
+struct PS_In 
+{  
+    float4 position		: SV_POSITION;
+	float4 color		: TEXCOORD0;
+	float4 normal		: NORMALWS; 
+	float2 uv			: TEXCOORD2;
+	float4 wpos			: POSITIONWS;
+}; 
+
+struct PS_Out 
+{  
+    float4 color		: SV_Target0;  
+    float4 normal		: SV_Target1;
+	float4 specular		: SV_Target2; 
+	float4 pos			: SV_Target3;
+};
+
+
+PS_Out LinePS(PS_In input)
+{  
+	PS_Out output;
+	output.color=input.color;
+	output.normal=input.normal;
+	output.specular=input.color;
+	output.pos=input.wpos;
+	return output;
+}

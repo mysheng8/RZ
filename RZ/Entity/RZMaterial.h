@@ -59,7 +59,7 @@ namespace RZ
 		RZMatParams*			m_params;
 
 		bool SetShaderParameters();
-		ID3D11Buffer*			m_matBuffer;
+		//ID3D11Buffer*			m_matBuffer;
 	};
 
 };

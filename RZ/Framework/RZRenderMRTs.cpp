@@ -165,6 +165,23 @@ bool RZRenderMRTs::InitializeShader()
         return false;  
     } 
 
+		//generate final shader
+	result = D3DX11CompileFromFile(finalVS, 0, 0, "RenderToQuadVertexShader", "vs_4_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, 0,&vertexShaderBuffer, &errorMessage, 0); 
+
+    if(FAILED(result))  
+    {   
+        if(errorMessage)  
+        {  
+			OutputShaderErrorMessage(errorMessage, m_hwnd, finalVS);
+        }  
+        else  
+        {  
+			MessageBox(m_hwnd, finalVS, "Missing Shader File", MB_OK);
+        }  
+  
+        return false;  
+    } 
+
 	//generate final shader
 	result = D3DX11CompileFromFile(finalVS, 0, 0, "RenderToQuadVertexShader", "vs_4_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, 0,&vertexShaderBuffer, &errorMessage, 0); 
 
@@ -172,11 +189,11 @@ bool RZRenderMRTs::InitializeShader()
     {   
         if(errorMessage)  
         {  
-            OutputShaderErrorMessage(errorMessage, m_hwnd, lightPS);  
+			OutputShaderErrorMessage(errorMessage, m_hwnd, finalVS);
         }  
         else  
         {  
-            MessageBox(m_hwnd, lightPS, "Missing Shader File", MB_OK);  
+			MessageBox(m_hwnd, finalVS, "Missing Shader File", MB_OK);
         }  
   
         return false;  
@@ -188,11 +205,11 @@ bool RZRenderMRTs::InitializeShader()
     {   
         if(errorMessage)  
         {  
-            OutputShaderErrorMessage(errorMessage, m_hwnd, lightPS);  
+			OutputShaderErrorMessage(errorMessage, m_hwnd, finalPS);
         }  
         else  
         {  
-            MessageBox(m_hwnd, lightPS, "Missing Shader File", MB_OK);  
+			MessageBox(m_hwnd, finalPS, "Missing Shader File", MB_OK);
         }  
   
         return false;  
@@ -339,7 +356,6 @@ bool RZRenderMRTs::InitializeQuad()
 	{
         return false;
 	}
-
 
 	cbbd.ByteWidth = sizeof(RZLightParams);
 
@@ -657,6 +673,7 @@ void RZRenderMRTs::RenderFinalPass(ID3D11DeviceContext* deviceContext)
 	UINT stride, offset;
 	stride = sizeof(RZQuadVPS);
     offset = 0;
+
 	deviceContext->IASetInputLayout(m_layout);
 	deviceContext->IASetIndexBuffer( m_quadIB, DXGI_FORMAT_R32_UINT, 0);
 	deviceContext->IASetVertexBuffers( 0, 1, &m_quadVB, &stride, &offset );
@@ -664,15 +681,15 @@ void RZRenderMRTs::RenderFinalPass(ID3D11DeviceContext* deviceContext)
 
 	//update constant buffer
 	RZQuadCB cbt;
-	
-	XMMATRIX WVP;
-	WVP=XMMatrixTranslation( 0.5f, -0.5f, 0.0f );
-	WVP=XMMatrixScaling( 1.0f, 1.0f, 0.0f );
-	WVP=XMMatrixTranspose(WVP);
 
-	cbt.wvp=WVP;
-	deviceContext->UpdateSubresource( m_matrixCB, 0, NULL, &cbt, 0, 0 );
-	deviceContext->VSSetConstantBuffers( 0, 1, &m_matrixCB );
+	XMMATRIX WVP;
+	WVP = XMMatrixTranslation(0.5f, -0.5f, 0.0f);
+	WVP = XMMatrixScaling(1.0f, 1.0f, 0.0f);
+	WVP = XMMatrixTranspose(WVP);
+
+	cbt.wvp = WVP;
+	deviceContext->UpdateSubresource(m_matrixCB, 0, NULL, &cbt, 0, 0);
+	deviceContext->VSSetConstantBuffers(0, 1, &m_matrixCB);
 
 	deviceContext->PSSetShaderResources( 0, 1, &m_colorSRV );
 	deviceContext->PSSetShaderResources( 1, 1, &m_lightingSRV );
@@ -742,11 +759,11 @@ void RZRenderMRTs::ShutDown()
 	RZRELEASE(m_quadIB);
 	RZRELEASE(m_finalVS);
 	RZRELEASE(m_finalPS);
-	RZRELEASE(m_pointLightVS);
+	//RZRELEASE(m_pointLightVS);
 	RZRELEASE(m_pointLightPS);
-	RZRELEASE(m_spotLightVS);
+	//RZRELEASE(m_spotLightVS);
 	RZRELEASE(m_spotLightPS);
-	RZRELEASE(m_directionLightVS);
+	//RZRELEASE(m_directionLightVS);
 	RZRELEASE(m_directionLightPS);
 	RZRELEASE(m_layout);
 	return;

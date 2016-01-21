@@ -1,0 +1,60 @@
+#define NUMPOINTS 8
+struct HS_CONSTANT_OUTPUT
+{
+    float edges[2]             : SV_TessFactor;
+};
+
+struct HS_OUTPUT
+{
+    float4 position		: SV_POSITION; 
+	float4 color		: TEXCOORD0;
+	float2 uv			: TEXCOORD1; 
+	float4 wpos			: POSITIONWS;
+};
+
+struct DS_OUTPUT
+{
+    float4 position		: SV_POSITION; 
+	float4 color		: TEXCOORD0;
+	float2 uv			: TEXCOORD1; 
+	float4 wpos			: POSITIONWS;
+};
+
+
+
+
+
+
+[domain("isoline")]
+DS_OUTPUT LineDS(HS_CONSTANT_OUTPUT input, OutputPatch<HS_OUTPUT, NUMPOINTS> op, float2 uv : SV_DomainLocation)
+{
+    DS_OUTPUT output;
+
+    float t = uv.x;
+
+	int num=floor(t*(NUMPOINTS-1))-1;
+
+
+	float T =	t*(NUMPOINTS-1)-num-1;
+	float f1 = (-T*T*T + 3*T*T - 3*T + 1) / 6.0;
+	float f2 =(3*T*T*T - 6*T*T + 4) / 6.0;
+	float f3 = (-3*T*T*T +3*T*T + 3*T + 1) / 6.0;
+	float f4 = (T*T*T) / 6.0;
+
+	int a=num;
+	int b=num+1;
+	int c=num+2;
+	int d=num+3;
+
+	if (a==-1) a=0;
+	if (num==NUMPOINTS-3) d=NUMPOINTS-1;
+	if (num==NUMPOINTS-2) {d=NUMPOINTS-1; c=NUMPOINTS-1;}
+
+
+	output.position= f1*op[a].position + f2*op[b].position + f3*op[c].position + f4*op[d].position;
+	output.color= f1*op[a].color + f2*op[b].color + f3*op[c].color + f4*op[d].color;
+	output.uv= f1*op[a].uv + f2*op[b].uv + f3*op[c].uv + f4*op[d].uv;
+	output.wpos= f1*op[a].wpos + f2*op[b].wpos + f3*op[c].wpos + f4*op[d].wpos;
+
+    return output;
+}

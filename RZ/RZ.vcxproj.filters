@@ -88,6 +88,15 @@
     <ClCompile Include="Framework\RZD3dRender.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
+    <ClCompile Include="Entity\RZLine.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="EntityManager\RZLineManager.cpp">
+      <Filter>EntityManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity\RZCurve.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Entity\FbxImporter\RZFbxImporter.h">
@@ -159,6 +168,15 @@
     <ClInclude Include="Framework\RZD3dRender.h">
       <Filter>Framework</Filter>
     </ClInclude>
+    <ClInclude Include="Entity\RZLine.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityManager\RZLineManager.h">
+      <Filter>EntityManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity\RZCurve.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\shader\renderToQuad.vs">
@@ -174,6 +192,36 @@
       <Filter>Resource\shader</Filter>
     </None>
     <None Include="Resource\shader\lighting.ps">
+      <Filter>Resource\shader</Filter>
+    </None>
+    <None Include="Resource\shader\line.gs">
+      <Filter>Resource\shader</Filter>
+    </None>
+    <None Include="Resource\shader\line.ps">
+      <Filter>Resource\shader</Filter>
+    </None>
+    <None Include="Resource\shader\line.vs">
+      <Filter>Resource\shader</Filter>
+    </None>
+    <None Include="Resource\shader\line.hs">
+      <Filter>Resource\shader</Filter>
+    </None>
+    <None Include="Resource\shader\line.ds">
+      <Filter>Resource\shader</Filter>
+    </None>
+    <None Include="Resource\shader\curve.vs">
+      <Filter>Resource\shader</Filter>
+    </None>
+    <None Include="Resource\shader\curve.ds">
+      <Filter>Resource\shader</Filter>
+    </None>
+    <None Include="Resource\shader\curve.gs">
+      <Filter>Resource\shader</Filter>
+    </None>
+    <None Include="Resource\shader\curve.hs">
+      <Filter>Resource\shader</Filter>
+    </None>
+    <None Include="Resource\shader\curve.ps">
       <Filter>Resource\shader</Filter>
     </None>
   </ItemGroup>

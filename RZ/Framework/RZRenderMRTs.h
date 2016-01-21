@@ -92,17 +92,18 @@ namespace RZ
 		ID3D11Buffer*						m_matrixCB;							// world transform matrix constant buffer
 		ID3D11Buffer*						m_lightingCB;						// lighting constant buffer
 
+
 		//shaders
 		ID3D11VertexShader*					m_finalVS;
 		ID3D11PixelShader*					m_finalPS;
-			
-		ID3D11VertexShader*					m_pointLightVS;
+		
+		//ID3D11VertexShader*					m_pointLightVS;
 		ID3D11PixelShader*					m_pointLightPS;
 
-		ID3D11VertexShader*					m_spotLightVS;
+		//ID3D11VertexShader*					m_spotLightVS;
 		ID3D11PixelShader*					m_spotLightPS;
 
-		ID3D11VertexShader*					m_directionLightVS;
+		//ID3D11VertexShader*					m_directionLightVS;
 		ID3D11PixelShader*					m_directionLightPS;
 
 

@@ -12,11 +12,9 @@ SamplerState Sampler : register( s0 );
 
 float4 RenderToQuadPixelShader(PixelInputType input)  : SV_Target0
 {  
-	float4 result;
-
 	float4 diffuse=colorMap.Sample(Sampler,input.uv);
 	float4 lighting=lightingMap.Sample(Sampler,input.uv);
-	return diffuse;
+	float4 result=saturate(lighting+0.3)*diffuse;
 
-
+	return result;
 }

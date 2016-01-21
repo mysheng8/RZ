@@ -34,7 +34,7 @@ bool SystemClass::Initialize()
 
 	m_Input->Initialize();
 
-	m_Graphics = new GraphicsClass; 
+	m_Graphics = GraphicsClass::GetInstance();
 	if(!m_Graphics)
 	{
 		return false;

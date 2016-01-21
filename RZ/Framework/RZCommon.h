@@ -13,10 +13,14 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <math.h>
 
 #include "RZResource.h"
 #define RZRELEASE(val) {if(val){ val->Release(); val = 0;};}
 //#define FULL_SCREEN 0;
 const bool FULL_SCREEN = false;
+
+#define PI 3.14159265358979323846
+
 
 #endif

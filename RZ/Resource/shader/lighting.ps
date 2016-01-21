@@ -50,7 +50,7 @@ float3 Calclighting(in float3 normal, in float3 pos, in float3 diffuseAlbedo, in
 		float3 H=normalize(L+V);
 		float3 specular=pow(saturate(dot(normal,H)),specularPower)*lightColor*specularAlbedo*nDotL;
 
-		return lightDir.xyz;
+		return diffuse+specular;
 
 };
 

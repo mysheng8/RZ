@@ -1,0 +1,46 @@
+
+struct HS_CONSTANT_OUTPUT
+{
+    float edges[2]             : SV_TessFactor;
+};
+
+struct HS_OUTPUT
+{
+    float4 position		: SV_POSITION; 
+	float4 color		: TEXCOORD0;
+	float2 uv			: TEXCOORD1; 
+	float4 wpos			: POSITIONWS;
+};
+
+struct DS_OUTPUT
+{
+    float4 position		: SV_POSITION; 
+	float4 color		: TEXCOORD0;
+	float2 uv			: TEXCOORD1; 
+	float4 wpos			: POSITIONWS;
+};
+
+
+
+
+
+
+[domain("isoline")]
+DS_OUTPUT LineDS(HS_CONSTANT_OUTPUT input, OutputPatch<HS_OUTPUT, 4> op, float2 uv : SV_DomainLocation)
+{
+    DS_OUTPUT output;
+
+    float t = uv.x;
+
+    float4 pos = pow(1.0f - t, 3.0f) * op[0].position + 3.0f * pow(1.0f - t, 2.0f) * t * op[1].position + 3.0f * (1.0f - t) * pow(t, 2.0f) * op[2].position + pow(t, 3.0f) * op[3].position;
+	float4 color = pow(1.0f - t, 3.0f) * op[0].color + 3.0f * pow(1.0f - t, 2.0f) * t * op[1].color + 3.0f * (1.0f - t) * pow(t, 2.0f) * op[2].color + pow(t, 3.0f) * op[3].color;
+	float2 tex = pow(1.0f - t, 3.0f) * op[0].uv + 3.0f * pow(1.0f - t, 2.0f) * t * op[1].uv + 3.0f * (1.0f - t) * pow(t, 2.0f) * op[2].uv + pow(t, 3.0f) * op[3].uv;
+	float4 wpos = pow(1.0f - t, 3.0f) * op[0].wpos + 3.0f * pow(1.0f - t, 2.0f) * t * op[1].wpos + 3.0f * (1.0f - t) * pow(t, 2.0f) * op[2].wpos + pow(t, 3.0f) * op[3].wpos;
+
+    output.position = pos;
+	output.color = color;
+	output.uv = tex;
+	output.wpos = wpos;
+
+    return output;
+}

@@ -253,9 +253,7 @@ bool RZIntermediateMesh::SaveAsRZMesh( const char* szFileName )
 	/////////////////////////////
     //Write out the header
 
-	bool hr=fout.write((char*)&fileheader, sizeof(RZMESH_HEADER));
-	if(!hr)
-		return false;
+	fout.write((char*)&fileheader, sizeof(RZMESH_HEADER));
 
 
 	/////////////////////////////
@@ -265,9 +263,7 @@ bool RZIntermediateMesh::SaveAsRZMesh( const char* szFileName )
     {
         RZMESH_VERTEX_BUFFER_HEADER* pVBH = m_VertexBufferArray[i];
         pVBH->DataOffset = BufferDataOffset;
-		hr=fout.write((char*)pVBH, sizeof(RZMESH_VERTEX_BUFFER_HEADER));
-		if(!hr)
-			return false;
+		fout.write((char*)pVBH, sizeof(RZMESH_VERTEX_BUFFER_HEADER));
         BufferDataOffset += Align4k( pVBH->SizeBytes );
     }
 
@@ -277,9 +273,7 @@ bool RZIntermediateMesh::SaveAsRZMesh( const char* szFileName )
     {
         RZMESH_INDEX_BUFFER_HEADER* pIBH = m_IndexBufferArray[i];
         pIBH->DataOffset = BufferDataOffset;
-		hr=fout.write((char*)pIBH, sizeof(RZMESH_INDEX_BUFFER_HEADER));
-		if(!hr)
-			return false;
+		fout.write((char*)pIBH, sizeof(RZMESH_INDEX_BUFFER_HEADER));
         BufferDataOffset += Align4k( pIBH->SizeBytes );
     }
 
@@ -291,9 +285,7 @@ bool RZIntermediateMesh::SaveAsRZMesh( const char* szFileName )
         RZMESH_MESH* pMesh = m_MeshArray[i];
         pMesh->SubsetOffset = SubsetListDataOffset;
         SubsetListDataOffset += pMesh->NumSubsets*sizeof(UINT);
-		hr=fout.write((char*)pMesh, sizeof(RZMESH_MESH));
-		if(!hr)
-			return false;
+		fout.write((char*)pMesh, sizeof(RZMESH_MESH));
     }
 
 	/////////////////////////////
@@ -301,9 +293,7 @@ bool RZIntermediateMesh::SaveAsRZMesh( const char* szFileName )
 	for( UINT i=0; i<m_MaterialArray.size(); i++ )
 	{
 	    RZMESH_MATERIAL* pMaterial = m_MaterialArray[i];
-		hr=fout.write((char*)pMaterial, sizeof(RZMESH_MATERIAL));
-		if(!hr)
-			return false;	
+		fout.write((char*)pMaterial, sizeof(RZMESH_MATERIAL));
 	}
 
     /////////////////////////////
@@ -311,9 +301,7 @@ bool RZIntermediateMesh::SaveAsRZMesh( const char* szFileName )
     for( UINT i=0; i<m_SubsetArray.size(); i++ )
     {
         INTERMEDIATE_SUBSET* pSubset = m_SubsetArray[i];
-		hr=fout.write((char*)pSubset, sizeof(RZMESH_SUBSET));
-		if(!hr)
-			return false;
+		fout.write((char*)pSubset, sizeof(RZMESH_SUBSET));
     }
 
 	/////////////////////////////
@@ -321,18 +309,14 @@ bool RZIntermediateMesh::SaveAsRZMesh( const char* szFileName )
     for( UINT i=0; i<m_VertexBufferArray.size(); i++ )
     {
         INTERMEDIATE_VERTEX_BUFFER* pVBH = m_VertexBufferArray[i];
-		hr=fout.write((char*)pVBH->pVertices, (size_t)pVBH->SizeBytes);
-		if(!hr)
-			return false;
+		fout.write((char*)pVBH->pVertices, (size_t)pVBH->SizeBytes);
 
         //pad
         UINT64 alignsize = Align4k( pVBH->SizeBytes );
         BYTE nothing = 0;
         for( UINT64 b=0; b<alignsize - pVBH->SizeBytes; b++ )
         {
-			hr=fout.write((char*)&nothing, sizeof(BYTE));
-			if(!hr)
-				return false;
+			fout.write((char*)&nothing, sizeof(BYTE));
         }
     }
 
@@ -342,16 +326,14 @@ bool RZIntermediateMesh::SaveAsRZMesh( const char* szFileName )
     {
         INTERMEDIATE_INDEX_BUFFER* pIBH = m_IndexBufferArray[i];
 		//hr=fout.write((char*)pIBH->pIndices, (size_t)pIBH->SizeBytes);
-		hr=fout.write((char*)pIBH->pIndices, (size_t)pIBH->SizeBytes);
+		fout.write((char*)pIBH->pIndices, (size_t)pIBH->SizeBytes);
 
         //pad
         UINT64 alignsize = Align4k( pIBH->SizeBytes );
         BYTE nothing = 0;
         for( UINT64 b=0; b<alignsize - pIBH->SizeBytes; b++ )
         {
-			hr=fout.write((char*)&nothing, sizeof(BYTE));
-			if(!hr)
-				return false;
+			fout.write((char*)&nothing, sizeof(BYTE));
         }
     }
 	fout.close();
